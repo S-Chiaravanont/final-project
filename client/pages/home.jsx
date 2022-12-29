@@ -1,10 +1,12 @@
 import React from 'react';
-import HelloWorld from '../components/hello-world';
+import ResponsiveAppBar from '../components/navbar';
+import LandingPage from '../components/landingPage';
 
 export default function Home(props) {
   return (
     <div>
-      <HelloWorld />
+      <ResponsiveAppBar />
+      <LandingPage />
     </div>
   );
 }

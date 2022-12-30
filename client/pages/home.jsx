@@ -1,10 +1,10 @@
 import React from 'react';
-import HelloWorld from '../components/hello-world';
+import LandingPage from '../components/landingPage';
 
 export default function Home(props) {
   return (
     <div>
-      <HelloWorld />
+      <LandingPage />
     </div>
   );
 }

@@ -32,19 +32,11 @@ export default class LandingPage extends React.Component {
     } else {
       const events = this.state.events;
       return (
-        <Box
-          maxWidth="md"
-          padding='44px'
-          margin='auto'>
-          <Typography
-          variant='h5'
-          marginBottom='30px'>
+        <Box maxWidth="md" padding='44px' margin='auto'>
+          <Typography variant='h5' marginBottom='30px'>
             `Hello, { this.state.events[0].fullName }!`
           </Typography>
-          <Box
-          marginBottom='30px'
-          display='flex'
-          justifyContent='space-evenly'
+          <Box marginBottom='30px' display='flex' justifyContent='space-evenly'
           sx={{ flexGrow: 1, display: 'flex' }}>
             <Button variant='contained' color='error' size='medium' sx={{ flexGrow: 0.1 }}>
               SEARCH
@@ -55,13 +47,9 @@ export default class LandingPage extends React.Component {
           </Box>
 
           <Box
-            backgroundColor='rgb(1, 112, 117)'
-            height='4rem'
-            borderRadius='5px'
-            display='flex'
-            alignItems='center'
-            padding='10px'
-            sx={{ flexGrow: 1 }}>
+            backgroundColor='rgb(1, 112, 117)' height='4rem'
+            borderRadius='5px' display='flex' alignItems='center'
+            padding='10px' sx={{ flexGrow: 1 }}>
             <EventAvailableIcon fontSize='large' sx={{ color: 'white', mr: 1 }} />
             <Typography color='white'>Upcoming Events</Typography>
           </Box>
@@ -80,7 +68,7 @@ export default class LandingPage extends React.Component {
                   <AccordionDetails>
                     <hr />
                     <Typography>
-                      Link: Event Link Here <br />
+                      Page: Event Link Here <br />
                       Event: {event.eventName} <br />
                       Date: {event.date} <br />
                       Time: {event.time} <br />

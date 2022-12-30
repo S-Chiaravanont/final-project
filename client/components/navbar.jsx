@@ -10,7 +10,7 @@ import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 
-const pages = ['Account', 'Sign Out'];
+const pages = ['account', 'sign out'];
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -19,9 +19,9 @@ function ResponsiveAppBar() {
     setAnchorElNav(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
+  function handleCloseNavMenu(event) {
     setAnchorElNav(null);
-  };
+  }
 
   return (
     <AppBar position="static" sx={{ backgroundColor: 'rgba(255,122,122)' }}>
@@ -31,7 +31,7 @@ function ResponsiveAppBar() {
             variant="h6"
             noWrap
             component="a"
-            href="/"
+            href="#home"
             sx={{
               mr: 2,
               display: 'flex',
@@ -53,6 +53,7 @@ function ResponsiveAppBar() {
               <Button
                 key={page}
                 onClick={handleCloseNavMenu}
+                href={'#' + page}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >
                 {page}
@@ -92,8 +93,13 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map(page => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem
+                key={page}
+                onClick={handleCloseNavMenu}>
+                  <Button textAlign="center"
+                    href={'#' + page}>
+                    {page}
+                  </Button>
                 </MenuItem>
               ))}
             </Menu>

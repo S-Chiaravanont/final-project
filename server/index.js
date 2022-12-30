@@ -3,6 +3,7 @@ const express = require('express');
 const staticMiddleware = require('./static-middleware');
 const errorMiddleware = require('./error-middleware');
 const pg = require('pg');
+const ClientError = require('./client-error');
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -16,12 +17,17 @@ app.use(express.json());
 
 app.get('/api/user/:userId', (req, res, next) => {
   const id = Number(req.params.userId);
+  if (id < 1) {
+    throw new ClientError(400, 'id is not valid, must be greater than 0');
+  }
   const sql = `
     select "sport",
            "date",
            "time",
-           "eventName"
+           "eventName",
+           "fullName"
       from "events"
+      join "users" using ("userId")
       where "userId" = $1
   `;
   const params = [id];

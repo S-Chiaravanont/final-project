@@ -5,6 +5,9 @@ import Box from '@mui/material/Box';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AppContext from '../lib/app-context';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
 
 export default class LandingPage extends React.Component {
   constructor(props) {
@@ -19,7 +22,6 @@ export default class LandingPage extends React.Component {
     fetch(`/api/user/${userId}`)
       .then(res => res.json())
       .then(data => {
-        // eslint-disable-next-line no-console
         this.setState({ events: data });
       });
   }
@@ -28,15 +30,16 @@ export default class LandingPage extends React.Component {
     if (!this.state.events) {
       return null;
     } else {
+      const events = this.state.events;
       return (
         <Box
-        maxWidth="md"
-        padding='44px'
-        margin='auto'>
+          maxWidth="md"
+          padding='44px'
+          margin='auto'>
           <Typography
           variant='h5'
           marginBottom='30px'>
-            Hello, User!
+            `Hello, { this.state.events[0].fullName }!`
           </Typography>
           <Box
           marginBottom='30px'
@@ -52,35 +55,43 @@ export default class LandingPage extends React.Component {
           </Box>
 
           <Box
-          backgroundColor='rgb(22,100,192)'
-          height='4rem'
-          borderRadius='5px'
-          display='flex'
-          alignItems='center'
-          padding='10px'
-          sx={{ flexGrow: 1 }}>
+            backgroundColor='rgb(1, 112, 117)'
+            height='4rem'
+            borderRadius='5px'
+            display='flex'
+            alignItems='center'
+            padding='10px'
+            sx={{ flexGrow: 1 }}>
             <EventAvailableIcon fontSize='large' sx={{ color: 'white', mr: 1 }} />
             <Typography color='white'>Upcoming Events</Typography>
           </Box>
-          <Box
-          borderBottom='1px solid gray'
-          borderRight='1px solid gray'
-          borderLeft='1px solid gray'
-          height='4rem'
-          borderRadius='5px'
-          display='flex'
-          alignItems='center'
-          justifyContent='space-between'
-          padding='10px'
-          sx={{ flexGrow: 1 }}>
-            <Typography>
-              Event #1
-            </Typography>
-            <Typography>
-              Sport
-            </Typography>
-            <ExpandMoreIcon />
-          </Box>
+          {
+            events.map((event, index) => {
+              return (
+                <Accordion key={index}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography>Event #{Number(index) + 1}</Typography>
+                    <Typography>{event.sport}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <hr />
+                    <Typography>
+                      Link: Event Link Here <br />
+                      Event: {event.eventName} <br />
+                      Date: {event.date} <br />
+                      Time: {event.time} <br />
+                      Location: TBD <br />
+                      Map: map_placeholder
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              );
+            })
+          }
         </Box>
       );
     }

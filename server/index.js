@@ -39,6 +39,13 @@ app.get('/api/user/:userId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.post('/api/auth/sign-in', (req, res, next) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    throw new ClientError(401, 'invalid login');
+  }
+});
+
 app.use(staticMiddleware);
 
 app.use(errorMiddleware);

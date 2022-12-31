@@ -5,7 +5,7 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
-import img from './istockphoto.jpeg';
+import img from '../images/istockphoto.jpeg';
 
 export default function HomeLandingPage() {
   return (

@@ -96,7 +96,7 @@ function ResponsiveAppBar() {
                 <MenuItem
                 key={page}
                 onClick={handleCloseNavMenu}>
-                  <Button textAlign="center"
+                  <Button
                     href={'#' + page}>
                     {page}
                   </Button>

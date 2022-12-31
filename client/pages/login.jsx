@@ -9,7 +9,9 @@ import AppContext from '../lib/app-context';
 export default class LoginPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = null;
+    this.state = {
+      error: false
+    };
     this.onSubmit = this.onSubmit.bind(this);
   }
 
@@ -30,7 +32,12 @@ export default class LoginPage extends React.Component {
     fetch('/api/auth/sign-in', req)
       .then(res => res.json())
       .then(result => {
-        this.context.onSignIn(result);
+        const { error } = result;
+        if (error) {
+          this.setState({ error: true });
+          return null;
+        }
+        this.context.handleSignIn(result);
       });
   }
 

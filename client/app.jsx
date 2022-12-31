@@ -4,6 +4,7 @@ import parseRoute from './lib/parse-route';
 import AppContext from './lib/app-context';
 import ResponsiveAppBar from './components/navbar';
 import LoginPage from './pages/login';
+import SignUpPage from './pages/signup';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -37,6 +38,8 @@ export default class App extends React.Component {
       return null;
     } else if (path === 'log-in') {
       return <LoginPage />;
+    } else if (path === 'sign-up') {
+      return <SignUpPage />;
     }
   }
 

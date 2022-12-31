@@ -14,6 +14,7 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+// import LoginPage from './login';
 
 export default class SignUpPage extends React.Component {
   constructor(props) {
@@ -21,7 +22,7 @@ export default class SignUpPage extends React.Component {
     this.state = {
       value: dayjs('1999-08-18T21:11:54')
     };
-    this.onSubmit = this.onSubmit.bind(this);
+    this.onRegister = this.onRegister.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -29,7 +30,7 @@ export default class SignUpPage extends React.Component {
     this.setState({ value: dayjs(event) });
   }
 
-  onSubmit(event) {
+  onRegister(event) {
     event.preventDefault();
     const username = event.target.elements[0].value;
     const password = event.target.elements[1].value;
@@ -39,9 +40,23 @@ export default class SignUpPage extends React.Component {
     const payload = {
       username, password, fullName, gender, DOB
     };
-    // eslint-disable-next-line no-console
-    console.log(payload);
-    return null;
+    const req = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    };
+    fetch('/api/auth/sign-up', req)
+      .then(res => res.json())
+      .then(result => {
+        const { error } = result;
+        if (error) {
+          // eslint-disable-next-line no-console
+          console.log(error);
+          return null;
+        }
+      });
   }
 
   render() {
@@ -50,7 +65,7 @@ export default class SignUpPage extends React.Component {
         <Typography variant='h4' sx={{ mt: 1, mb: 2 }}>
           Sign up
         </Typography>
-        <form onSubmit={this.onSubmit}>
+        <form onSubmit={this.onRegister}>
           <Typography sx={{ mt: 2 }}>
             Username:
           </Typography>
@@ -90,6 +105,7 @@ export default class SignUpPage extends React.Component {
               row
               aria-labelledby="demo-row-radio-buttons-group-label"
               name="row-radio-buttons-group"
+              defaultValue="male"
             >
               <FormControlLabel value="male" control={<Radio />} label="Male" />
               <FormControlLabel value="female" control={<Radio />} label="Female" />

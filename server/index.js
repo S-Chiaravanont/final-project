@@ -75,6 +75,30 @@ app.post('/api/auth/sign-in', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.post('/api/auth/sign-up', (req, res, next) => {
+  const { username, password, fullName, gender } = req.body;
+  const yearOfBirth = req.body.DOB;
+  if (!username || !password || !fullName) {
+    throw new ClientError(401, 'invalid login 1 here');
+  }
+  argon2
+    .hash(password)
+    .then(hashedPassword => {
+      const sql = `
+        insert into "user" ("username", "hashedPassword", "fullName", "gender", "yearOfBirth")
+            values ($1, $2, $3, $4, $5)
+            returning "username", "fullName"
+      `;
+      const params = [username, hashedPassword, fullName, gender, yearOfBirth];
+      return db.query(sql, params);
+    })
+    .then(result => {
+      const [user] = result.rows;
+      res.status(201).json(user);
+    })
+    .catch(err => next(err));
+});
+
 app.use(staticMiddleware);
 
 app.use(errorMiddleware);

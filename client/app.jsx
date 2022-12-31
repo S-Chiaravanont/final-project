@@ -8,9 +8,10 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: {
-        userId: 1
-      },
+      user: null,
+      // {
+      //   userId: 1
+      // },
       route: parseRoute(window.location.hash)
     };
   }
@@ -25,7 +26,7 @@ export default class App extends React.Component {
 
   renderThisPage() {
     const { path } = this.state.route;
-    if (path === 'home' || path === '') {
+    if (path === 'home') {
       return <Home />;
     } else if (path === 'account') {
       return null;

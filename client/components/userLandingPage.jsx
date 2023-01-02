@@ -47,39 +47,39 @@ export default class LandingPage extends React.Component {
           </Box>
 
           <Box
-            backgroundColor='rgb(1, 112, 117)' height='4rem'
-            borderRadius='5px' display='flex' alignItems='center'
-            padding='10px' sx={{ flexGrow: 1 }}>
+          backgroundColor='rgb(1, 112, 117)' height='4rem'
+          borderRadius='5px' display='flex' alignItems='center'
+          padding='10px' sx={{ flexGrow: 1 }}>
             <EventAvailableIcon fontSize='large' sx={{ color: 'white', mr: 1 }} />
             <Typography color='white'>Upcoming Events</Typography>
           </Box>
           {
-            events.map((event, index) => {
-              return (
-                <Accordion key={index}>
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                  >
-                    <Typography>Event #{Number(index) + 1}</Typography>
-                    <Typography>{event.sport}</Typography>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <hr />
-                    <Typography>
-                      Page: Event Link Here <br />
-                      Event: {event.eventName} <br />
-                      Date: {event.date} <br />
-                      Time: {event.time} <br />
-                      Location: TBD <br />
-                      Map: map_placeholder
-                    </Typography>
-                  </AccordionDetails>
-                </Accordion>
-              );
-            })
-          }
+          events.map((event, index) => {
+            return (
+              <Accordion key={index}>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>Event #{Number(index) + 1}</Typography>
+                  <Typography>{event.sport}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <hr />
+                  <Typography>
+                    Page: Event Link Here <br />
+                    Event: {event.eventName} <br />
+                    Date: {event.date} <br />
+                    Time: {event.time} <br />
+                    Location: TBD <br />
+                    Map: map_placeholder
+                  </Typography>
+                </AccordionDetails>
+              </Accordion>
+            );
+          })
+        }
         </Box>
       );
     }

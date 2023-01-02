@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,10 +9,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
+import AppContext from '../lib/app-context';
 
 const pages = ['account', 'sign out'];
 
 function ResponsiveAppBar() {
+  const user = useContext(AppContext).user;
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const handleOpenNavMenu = event => {
@@ -23,28 +25,10 @@ function ResponsiveAppBar() {
     setAnchorElNav(null);
   }
 
-  return (
-    <AppBar position="static" sx={{ backgroundColor: 'rgba(255,122,122)' }}>
-      <Container maxWidth="md">
-        <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#home"
-            sx={{
-              mr: 2,
-              display: 'flex',
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none'
-            }}
-          >
-            PICKUP
-          </Typography>
-
+  function isLoggedIn() {
+    if (user) {
+      return (
+        <>
           <Box
             display='flex'
             justifyContent='flex-end'
@@ -60,7 +44,6 @@ function ResponsiveAppBar() {
               </Button>
             ))}
           </Box>
-
           <Box display='flex'
             justifyContent='flex-end'
            sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -104,9 +87,50 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
+        </>
+      );
+    } else {
+      return (
+        <Box
+          display='flex'
+          justifyContent='flex-end'
+          sx={{ flexGrow: 1, display: 'flex' }}>
+          <Button
+              href='#log-in'
+              sx={{ my: 2, color: 'white', display: 'block' }}>
+            Sign In
+          </Button>
+        </Box>
+      );
+    }
+  }
+
+  return (
+    <AppBar position="static" sx={{ backgroundColor: 'rgba(255,122,122)' }}>
+      <Container maxWidth="md">
+        <Toolbar disableGutters>
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="#home"
+            sx={{
+              mr: 2,
+              display: 'flex',
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none'
+            }}
+          >
+            PICKUP
+          </Typography>
+          {isLoggedIn()}
         </Toolbar>
       </Container>
     </AppBar>
   );
 }
 export default ResponsiveAppBar;
+ResponsiveAppBar.contextType = AppContext;

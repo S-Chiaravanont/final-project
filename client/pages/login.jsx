@@ -6,14 +6,58 @@ import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import AppContext from '../lib/app-context';
 import Redirect from '../components/redirect';
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import Collapse from '@mui/material/Collapse';
+import CloseIcon from '@mui/icons-material/Close';
+import AlertTitle from '@mui/material/AlertTitle';
 
 export default class LoginPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: false
+      error: false,
+      alert: false
     };
     this.onSubmit = this.onSubmit.bind(this);
+    this.UnsuccessAlerts = this.UnsuccessAlerts.bind(this);
+    this.AlertOnClick = this.AlertOnClick.bind(this);
+  }
+
+  AlertOnClick(event) {
+    this.setState({ alert: false });
+  }
+
+  UnsuccessAlerts() {
+    if (this.state.alert) {
+      return (
+        <Box
+        sx={{ width: '350px', mt: 8 }}>
+          <Collapse in={this.state.alert}>
+            <Alert
+            severity='error'
+            variant="filled"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={this.AlertOnClick}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+              <AlertTitle>Error</AlertTitle>
+              Invalid log in!
+            </Alert>
+          </Collapse>
+        </Box>
+      );
+    } else {
+      return null;
+    }
   }
 
   onSubmit(event) {
@@ -35,7 +79,7 @@ export default class LoginPage extends React.Component {
       .then(result => {
         const { error } = result;
         if (error) {
-          this.setState({ error: true });
+          this.setState({ error: true, alert: true });
           return null;
         }
         this.context.handleSignIn(result);
@@ -82,6 +126,7 @@ export default class LoginPage extends React.Component {
             Log in
           </Button>
         </form>
+        {this.UnsuccessAlerts()}
       </Box>
     );
   }

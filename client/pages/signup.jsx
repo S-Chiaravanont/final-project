@@ -14,16 +14,58 @@ import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import Redirect from '../components/redirect';
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
+import Collapse from '@mui/material/Collapse';
+import CloseIcon from '@mui/icons-material/Close';
 
 export default class SignUpPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       value: dayjs('1999-08-18T21:11:54'),
-      signUpSuccess: false
+      signUpSuccess: false,
+      alert: false
     };
     this.onRegister = this.onRegister.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.UnsuccessAlerts = this.UnsuccessAlerts.bind(this);
+    this.AlertOnClick = this.AlertOnClick.bind(this);
+  }
+
+  AlertOnClick(event) {
+    this.setState({ alert: false });
+  }
+
+  UnsuccessAlerts() {
+    if (this.state.alert) {
+      return (
+        <Box
+          sx={{ width: '350px', mt: 1, mb: 1 }}>
+          <Collapse in={this.state.alert}>
+            <Alert
+              severity='error'
+              variant="filled"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={this.AlertOnClick}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+            >
+              Username unavailable
+            </Alert>
+          </Collapse>
+        </Box>
+      );
+    } else {
+      return null;
+    }
   }
 
   handleChange(event) {
@@ -52,6 +94,7 @@ export default class SignUpPage extends React.Component {
       .then(result => {
         const { error } = result;
         if (error) {
+          this.setState({ alert: true });
           // eslint-disable-next-line no-console
           console.log(error);
           return null;
@@ -81,6 +124,7 @@ export default class SignUpPage extends React.Component {
               fullWidth
             />
             </Box>
+            {this.UnsuccessAlerts()}
             <Typography sx={{ mt: 1 }}>
               Password:
             </Typography>

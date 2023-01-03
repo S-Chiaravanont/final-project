@@ -4,6 +4,8 @@ const staticMiddleware = require('./static-middleware');
 const errorMiddleware = require('./error-middleware');
 const pg = require('pg');
 const ClientError = require('./client-error');
+const argon2 = require('argon2');
+const jwt = require('jsonwebtoken');
 
 const db = new pg.Pool({
   connectionString: process.env.DATABASE_URL,
@@ -24,8 +26,7 @@ app.get('/api/user/:userId', (req, res, next) => {
     select "sport",
            "date",
            "time",
-           "eventName",
-           "fullName"
+           "eventName"
       from "events"
       join "users" using ("userId")
       where "userId" = $1
@@ -35,6 +36,65 @@ app.get('/api/user/:userId', (req, res, next) => {
     .then(result => {
       const events = result.rows;
       res.status(200).json(events);
+    })
+    .catch(err => next(err));
+});
+
+app.post('/api/auth/sign-in', (req, res, next) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    throw new ClientError(401, 'invalid login 1');
+  }
+  const sql = `
+    select "userId",
+           "hashedPassword",
+           "fullName"
+      from "users"
+    where  "userName" = $1
+  `;
+  const params = [username];
+  db.query(sql, params)
+    .then(result => {
+      const [user] = result.rows;
+      if (!user) {
+        throw new ClientError(401, 'invalid login 2');
+      }
+      const { userId, hashedPassword, fullName } = user;
+      return argon2
+        .verify(hashedPassword, password)
+        .then(isMatching => {
+          if (!isMatching) {
+            throw new ClientError(401, 'invalid login 3');
+          }
+          const payload = { userId, fullName };
+          const token = jwt.sign(payload, process.env.TOKEN_SECRET);
+          res.json({ token, user: payload });
+        });
+    })
+    .catch(err => next(err));
+});
+
+app.post('/api/auth/sign-up', (req, res, next) => {
+  const { username, password, fullName, gender } = req.body;
+  const yearOfBirth = req.body.DOB;
+  const preference = 'null';
+  if (!username || !password || !fullName) {
+    throw new ClientError(401, 'invalid login 1 here');
+  }
+  argon2
+    .hash(password)
+    .then(hashedPassword => {
+      const sql = `
+        insert into "users" ("userName", "hashedPassword", "fullName", "gender", "yearOfBirth", "preference")
+            values ($1, $2, $3, $4, $5, $6)
+            returning "fullName", "createdAt";
+      `;
+      const params = [username, hashedPassword, fullName, gender, yearOfBirth, preference];
+      return db.query(sql, params);
+    })
+    .then(result => {
+      const [user] = result.rows;
+      res.status(201).json(user);
     })
     .catch(err => next(err));
 });

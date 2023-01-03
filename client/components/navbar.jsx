@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -9,10 +9,11 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-
-const pages = ['account', 'sign out'];
+import AppContext from '../lib/app-context';
 
 function ResponsiveAppBar() {
+  const user = useContext(AppContext).user;
+  const { handleSignOut } = useContext(AppContext);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const handleOpenNavMenu = event => {
@@ -23,44 +24,27 @@ function ResponsiveAppBar() {
     setAnchorElNav(null);
   }
 
-  return (
-    <AppBar position="static" sx={{ backgroundColor: 'rgba(255,122,122)' }}>
-      <Container maxWidth="md">
-        <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="#home"
-            sx={{
-              mr: 2,
-              display: 'flex',
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none'
-            }}
-          >
-            PICKUP
-          </Typography>
-
+  function isLoggedIn() {
+    if (user) {
+      return (
+        <>
           <Box
             display='flex'
             justifyContent='flex-end'
             sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map(page => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                href={'#' + page}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
+            <Button
+              href='#account'
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Account
+            </Button>
+            <Button
+              onClick={handleSignOut}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Sign Out
+            </Button>
           </Box>
-
           <Box display='flex'
             justifyContent='flex-end'
            sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -92,18 +76,61 @@ function ResponsiveAppBar() {
                 display: { xs: 'block', md: 'none' }
               }}
             >
-              {pages.map(page => (
-                <MenuItem
-                key={page}
-                onClick={handleCloseNavMenu}>
-                  <Button textAlign="center"
-                    href={'#' + page}>
-                    {page}
-                  </Button>
-                </MenuItem>
-              ))}
+              <MenuItem
+              onClick={handleCloseNavMenu}>
+                <Button
+                  href='#account'>
+                  Account
+                </Button>
+              </MenuItem>
+              <MenuItem
+                onClick={handleSignOut}>
+                <Button>
+                  Sign Out
+                </Button>
+              </MenuItem>
             </Menu>
           </Box>
+        </>
+      );
+    } else {
+      return (
+        <Box
+          display='flex'
+          justifyContent='flex-end'
+          sx={{ flexGrow: 1, display: 'flex' }}>
+          <Button
+              href='#log-in'
+              sx={{ my: 2, color: 'white', display: 'block' }}>
+            Sign In
+          </Button>
+        </Box>
+      );
+    }
+  }
+
+  return (
+    <AppBar position="static" sx={{ backgroundColor: 'rgba(255,122,122)' }}>
+      <Container maxWidth="md">
+        <Toolbar disableGutters>
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="#home"
+            sx={{
+              mr: 2,
+              display: 'flex',
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none'
+            }}
+          >
+            PICKUP
+          </Typography>
+          {isLoggedIn()}
         </Toolbar>
       </Container>
     </AppBar>

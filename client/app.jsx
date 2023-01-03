@@ -10,9 +10,7 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: {
-        userId: 1
-      },
+      user: null,
       route: parseRoute(window.location.hash)
     };
     this.handleSignIn = this.handleSignIn.bind(this);
@@ -32,6 +30,11 @@ export default class App extends React.Component {
     this.setState({ user });
   }
 
+  handleSignOut() {
+    window.localStorage.removeItem('react-context-jwt');
+    this.setState({ user: null });
+  }
+
   renderThisPage() {
     const { path } = this.state.route;
     if (path === 'home' || path === '') {
@@ -47,8 +50,8 @@ export default class App extends React.Component {
 
   render() {
     const { user } = this.state;
-    const { handleSignIn } = this;
-    const contextValue = { user, handleSignIn };
+    const { handleSignIn, handleSignOut } = this;
+    const contextValue = { user, handleSignIn, handleSignOut };
     return (
       <AppContext.Provider value={contextValue}>
         <>

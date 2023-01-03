@@ -27,6 +27,7 @@ export default class LandingPage extends React.Component {
   }
 
   render() {
+    const { fullName } = this.context.user;
     if (!this.state.events) {
       return null;
     } else {
@@ -34,7 +35,7 @@ export default class LandingPage extends React.Component {
       return (
         <Box maxWidth="md" padding='44px' margin='auto'>
           <Typography variant='h5' marginBottom='30px'>
-            `Hello, { this.state.events[0].fullName }!`
+            `Hello, { fullName }!`
           </Typography>
           <Box marginBottom='30px' display='flex' justifyContent='space-evenly'
           sx={{ flexGrow: 1, display: 'flex' }}>

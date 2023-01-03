@@ -14,13 +14,15 @@ import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import Redirect from '../components/redirect';
 // import LoginPage from './login';
 
 export default class SignUpPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: dayjs('1999-08-18T21:11:54')
+      value: dayjs('1999-08-18T21:11:54'),
+      signUpSuccess: false
     };
     this.onRegister = this.onRegister.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -56,77 +58,82 @@ export default class SignUpPage extends React.Component {
           console.log(error);
           return null;
         }
+        this.setState({ signUpSuccess: true });
       });
   }
 
   render() {
-    return (
-      <Container maxWidth='md' sx={{ p: 3 }}>
-        <Typography variant='h4' sx={{ mt: 1, mb: 2 }}>
-          Sign up
-        </Typography>
-        <form onSubmit={this.onRegister}>
-          <Typography sx={{ mt: 2 }}>
-            Username:
+    if (this.state.signUpSuccess) {
+      return <Redirect to="log-in" />;
+    } else {
+      return (
+        <Container maxWidth='md' sx={{ p: 3 }}>
+          <Typography variant='h4' sx={{ mt: 1, mb: 2 }}>
+            Sign up
           </Typography>
-          <Box>
-            <TextField
+          <form onSubmit={this.onRegister}>
+            <Typography sx={{ mt: 2 }}>
+              Username:
+            </Typography>
+            <Box>
+              <TextField
               required
               id="filled-required"
               variant="filled"
               fullWidth
             />
-          </Box>
-          <Typography sx={{ mt: 1 }}>
-            Password:
-          </Typography>
-          <Box>
-            <TextField
+            </Box>
+            <Typography sx={{ mt: 1 }}>
+              Password:
+            </Typography>
+            <Box>
+              <TextField
               required
               id="filled-password-input"
               variant="filled"
               fullWidth
             />
-          </Box>
-          <Typography sx={{ mt: 1 }}>
-            Name:
-          </Typography>
-          <Box>
-            <TextField
+            </Box>
+            <Typography sx={{ mt: 1 }}>
+              Name:
+            </Typography>
+            <Box>
+              <TextField
               required
               id="filled-password-input"
               variant="filled"
               fullWidth
             />
-          </Box>
-          <FormControl>
-            <FormLabel sx={{ mt: 1 }} id="demo-row-radio-buttons-group-label">Gender</FormLabel>
-            <RadioGroup
+            </Box>
+            <FormControl>
+              <FormLabel sx={{ mt: 1 }} id="demo-row-radio-buttons-group-label">Gender</FormLabel>
+              <RadioGroup
               row
               aria-labelledby="demo-row-radio-buttons-group-label"
               name="row-radio-buttons-group"
               defaultValue="male"
             >
-              <FormControlLabel value="male" control={<Radio />} label="Male" />
-              <FormControlLabel value="female" control={<Radio />} label="Female" />
-            </RadioGroup>
-          </FormControl>
-          <Box sx={{ mt: 2, mb: 2 }}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DesktopDatePicker
+                <FormControlLabel value="male" control={<Radio />} label="Male" />
+                <FormControlLabel value="female" control={<Radio />} label="Female" />
+              </RadioGroup>
+            </FormControl>
+            <Box sx={{ mt: 2, mb: 2 }}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DesktopDatePicker
                 label="Date of Birth"
                 inputFormat="MM/DD/YYYY"
                 value={this.state.value}
                 onChange={this.handleChange}
                 renderInput={params => <TextField {...params} />}
               />
-            </LocalizationProvider>
-          </Box>
-          <Button type='submit' variant='contained' fullWidth height='30px' sx={{ mt: 2 }}>
-            Register
-          </Button>
-        </form>
-      </Container>
-    );
+              </LocalizationProvider>
+            </Box>
+            <Button type='submit' variant='contained' fullWidth height='30px' sx={{ mt: 2 }}>
+              Register
+            </Button>
+          </form>
+        </Container>
+      );
+    }
   }
 }

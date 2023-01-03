@@ -26,8 +26,7 @@ app.get('/api/user/:userId', (req, res, next) => {
     select "sport",
            "date",
            "time",
-           "eventName",
-           "fullName"
+           "eventName"
       from "events"
       join "users" using ("userId")
       where "userId" = $1
@@ -78,6 +77,7 @@ app.post('/api/auth/sign-in', (req, res, next) => {
 app.post('/api/auth/sign-up', (req, res, next) => {
   const { username, password, fullName, gender } = req.body;
   const yearOfBirth = req.body.DOB;
+  const preference = 'null';
   if (!username || !password || !fullName) {
     throw new ClientError(401, 'invalid login 1 here');
   }
@@ -85,11 +85,11 @@ app.post('/api/auth/sign-up', (req, res, next) => {
     .hash(password)
     .then(hashedPassword => {
       const sql = `
-        insert into "user" ("username", "hashedPassword", "fullName", "gender", "yearOfBirth")
-            values ($1, $2, $3, $4, $5)
-            returning "username", "fullName"
+        insert into "users" ("userName", "hashedPassword", "fullName", "gender", "yearOfBirth", "preference")
+            values ($1, $2, $3, $4, $5, $6)
+            returning "fullName", "createdAt";
       `;
-      const params = [username, hashedPassword, fullName, gender, yearOfBirth];
+      const params = [username, hashedPassword, fullName, gender, yearOfBirth, preference];
       return db.query(sql, params);
     })
     .then(result => {

@@ -133,4 +133,3 @@ function ResponsiveAppBar() {
   );
 }
 export default ResponsiveAppBar;
-ResponsiveAppBar.contextType = AppContext;

@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import AppContext from '../lib/app-context';
+import Redirect from '../components/redirect';
 
 export default class LoginPage extends React.Component {
   constructor(props) {
@@ -42,6 +43,7 @@ export default class LoginPage extends React.Component {
   }
 
   render() {
+    if (this.context.user) return <Redirect to="home" />;
     return (
       <Box width='400px' height='400px'
         sx={{ boxShadow: 4, ml: 'auto', mr: 'auto', p: 3, mt: '5%' }}>
@@ -81,7 +83,6 @@ export default class LoginPage extends React.Component {
           </Button>
         </form>
       </Box>
-
     );
   }
 }

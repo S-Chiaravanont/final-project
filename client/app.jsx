@@ -5,6 +5,7 @@ import AppContext from './lib/app-context';
 import ResponsiveAppBar from './components/navbar';
 import LoginPage from './pages/login';
 import SignUpPage from './pages/signup';
+import SuccessAlerts from './components/successAlert';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -47,6 +48,8 @@ export default class App extends React.Component {
       return <LoginPage />;
     } else if (path === 'sign-up') {
       return <SignUpPage />;
+    } else if (path === 'successAlert') {
+      return <SuccessAlerts />;
     }
   }
 

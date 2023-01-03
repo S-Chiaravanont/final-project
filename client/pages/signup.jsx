@@ -95,8 +95,6 @@ export default class SignUpPage extends React.Component {
         const { error } = result;
         if (error) {
           this.setState({ alert: true });
-          // eslint-disable-next-line no-console
-          console.log(error);
           return null;
         }
         this.setState({ signUpSuccess: true });
@@ -105,7 +103,7 @@ export default class SignUpPage extends React.Component {
 
   render() {
     if (this.state.signUpSuccess) {
-      return <Redirect to="log-in" />;
+      return <Redirect to="successAlert" />;
     } else {
       return (
         <Container maxWidth='md' sx={{ p: 3 }}>

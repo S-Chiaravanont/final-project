@@ -4,35 +4,54 @@ import Alert from '@mui/material/Alert';
 import IconButton from '@mui/material/IconButton';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close';
+import Redirect from './redirect';
 
-export default function UnsuccessAlerts() {
-  const [open, setOpen] = React.useState(true);
+export default class SuccessAlerts extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      message: false
+    };
+  }
 
-  return (
-    <Box
+  componentDidMount() {
+    this.timerID = setInterval(() => {
+      this.setState({ message: true });
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerID);
+  }
+
+  render() {
+    if (this.state.message) {
+      return <Redirect to="log-in" />;
+    } else {
+      return (
+        <Box
       position='absolute'
       bottom='10%'
       right='10%'
       sx={{ width: '30%' }}>
-      <Collapse in={open}>
-        <Alert
+          <Collapse in={true}>
+            <Alert
           action={
             <IconButton
               aria-label="close"
               color="inherit"
               size="small"
-              onClick={() => {
-                setOpen(false);
-              }}
             >
               <CloseIcon fontSize="inherit" />
             </IconButton>
           }
           sx={{ mb: 2 }}
         >
-          Logged in!
-        </Alert>
-      </Collapse>
-    </Box>
-  );
+              Account created successfully!
+            </Alert>
+          </Collapse>
+        </Box>
+      );
+    }
+  }
 }

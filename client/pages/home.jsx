@@ -6,23 +6,12 @@ import HomeLandingPage from '../components/homeLandingPage';
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      login: false
-    };
-  }
-
-  componentDidMount(props) {
-    const { user } = this.context;
-    if (user) {
-      this.setState({ login: true });
-    } else {
-      this.setState({ login: false });
-    }
+    this.state = null;
   }
 
   render() {
-    const { login } = this.state;
-    if (login) {
+    const { user } = this.context;
+    if (user) {
       return (
         <div>
           <LandingPage />

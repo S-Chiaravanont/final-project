@@ -11,10 +11,9 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import AppContext from '../lib/app-context';
 
-const pages = ['account', 'sign out'];
-
 function ResponsiveAppBar() {
   const user = useContext(AppContext).user;
+  const { handleSignOut } = useContext(AppContext);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const handleOpenNavMenu = event => {
@@ -33,16 +32,18 @@ function ResponsiveAppBar() {
             display='flex'
             justifyContent='flex-end'
             sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map(page => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                href={'#' + page}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
-            ))}
+            <Button
+              href='#account'
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Account
+            </Button>
+            <Button
+              onClick={handleSignOut}
+              sx={{ my: 2, color: 'white', display: 'block' }}
+            >
+              Sign Out
+            </Button>
           </Box>
           <Box display='flex'
             justifyContent='flex-end'
@@ -75,16 +76,19 @@ function ResponsiveAppBar() {
                 display: { xs: 'block', md: 'none' }
               }}
             >
-              {pages.map(page => (
-                <MenuItem
-                key={page}
-                onClick={handleCloseNavMenu}>
-                  <Button
-                    href={'#' + page}>
-                    {page}
-                  </Button>
-                </MenuItem>
-              ))}
+              <MenuItem
+              onClick={handleCloseNavMenu}>
+                <Button
+                  href='#account'>
+                  Account
+                </Button>
+              </MenuItem>
+              <MenuItem
+                onClick={handleSignOut}>
+                <Button>
+                  Sign Out
+                </Button>
+              </MenuItem>
             </Menu>
           </Box>
         </>

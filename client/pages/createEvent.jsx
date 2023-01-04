@@ -95,9 +95,20 @@ export default class CreateEventPage extends React.Component {
                       <MenuItem value="">
                         <em>None</em>
                       </MenuItem>
-                      <MenuItem value='Soccer'>Soccer</MenuItem>
+                      <MenuItem value='Badminton'>Badminton</MenuItem>
                       <MenuItem value='Basketball'>Basketball</MenuItem>
+                      <MenuItem value='Bowling'>Bowling</MenuItem>
+                      <MenuItem value='Climbing'>Climbing</MenuItem>
+                      <MenuItem value='Cycling'>Cycling</MenuItem>
+                      <MenuItem value='Football'>Football</MenuItem>
+                      <MenuItem value='Golf'>Golf</MenuItem>
+                      <MenuItem value='Ice skating'>Ice skating</MenuItem>
                       <MenuItem value='Laser tage'>Laser Tag</MenuItem>
+                      <MenuItem value='Ping pong'>Ping pong</MenuItem>
+                      <MenuItem value='Soccer'>Soccer</MenuItem>
+                      <MenuItem value='Swimming'>Swimming</MenuItem>
+                      <MenuItem value='Tennis'>Tennis</MenuItem>
+                      <MenuItem value='Volleyball'>Volleyball</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>

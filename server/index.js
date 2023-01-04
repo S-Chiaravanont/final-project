@@ -43,7 +43,7 @@ app.get('/api/user/:userId', (req, res, next) => {
 app.post('/api/auth/sign-in', (req, res, next) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    throw new ClientError(401, 'invalid login 1');
+    throw new ClientError(401, 'invalid login');
   }
   const sql = `
     select "userId",
@@ -64,7 +64,7 @@ app.post('/api/auth/sign-in', (req, res, next) => {
         .verify(hashedPassword, password)
         .then(isMatching => {
           if (!isMatching) {
-            throw new ClientError(401, 'invalid login 3');
+            throw new ClientError(401, 'invalid login');
           }
           const payload = { userId, fullName };
           const token = jwt.sign(payload, process.env.TOKEN_SECRET);

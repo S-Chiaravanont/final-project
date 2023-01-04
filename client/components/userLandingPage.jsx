@@ -42,7 +42,8 @@ export default class LandingPage extends React.Component {
             <Button variant='contained' color='error' size='medium' sx={{ flexGrow: 0.1 }}>
               SEARCH
             </Button>
-            <Button variant='contained' size='medium' color='error' sx={{ flexGrow: 0.1 }}>
+            <Button variant='contained' size='medium' href='#createEvent'
+            color='error' sx={{ flexGrow: 0.1 }}>
               CREATE
             </Button>
           </Box>

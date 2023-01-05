@@ -37,13 +37,15 @@ export default class CreateEventPage extends React.Component {
     const host = this.context.userId;
     const eventName = event.target.elements[0].value;
     const sport = event.target.elements[1].value;
-    const date = event.target.elements[2].value;
-    const time = event.target.elements[5].value;
-    const location = event.target.elements[8].value;
-    const lat = event.target.elements[9].value;
-    const lng = event.target.elements[10].value;
+    const participant = event.target.elements[2].value;
+    const date = event.target.elements[3].value;
+    const time = event.target.elements[6].value;
+    const note = event.target.elements[9].value;
+    const location = event.target.elements[11].value;
+    const lat = event.target.elements[12].value;
+    const lng = event.target.elements[13].value;
     const payload = {
-      host, eventName, sport, date, time, location, lat, lng
+      host, eventName, sport, participant, date, time, note, location, lat, lng
     };
     // eslint-disable-next-line no-console
     console.log(payload);

@@ -15,20 +15,55 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import GmapsSetUp from '../components/gmapsSetUp';
 
 export default class CreateEventPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       value: dayjs(),
-      sport: null
+      sport: ''
     };
     this.onCreateEvent = this.onCreateEvent.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.sportHandleChange = this.sportHandleChange.bind(this);
+    this.renderMap = this.renderMap.bind(this);
   }
 
   onCreateEvent(event) {
+    // eslint-disable-next-line no-console
+    console.log(event);
+    event.preventDefault();
+    const host = this.context.userId;
+    const eventName = event.target.elements[0].value;
+    const sport = event.target.elements[1].value;
+    const date = event.target.elements[2].value;
+    const time = event.target.elements[5].value;
+    const location = event.target.elements[8].value;
+    const lat = event.target.elements[9].value;
+    const lng = event.target.elements[10].value;
+    const payload = {
+      host, eventName, sport, date, time, location, lat, lng
+    };
+    // eslint-disable-next-line no-console
+    console.log(payload);
+    // const req = {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    //   body: JSON.stringify(payload)
+    // };
+    // fetch('/api/', req)
+    //   .then(res => res.json())
+    //   .then(result => {
+    //     const { error } = result;
+    //     if (error) {
+    //       this.setState({ alert: true });
+    //       return null;
+    //     }
+    //     this.setState({ signUpSuccess: true });
+    //   });
     return null;
   }
 
@@ -37,7 +72,12 @@ export default class CreateEventPage extends React.Component {
   }
 
   sportHandleChange(event) {
-    this.setState({ sport: event.target.value });
+    const selectedSport = event.target.value;
+    this.setState({ sport: selectedSport });
+  }
+
+  renderMap(Status) {
+    return <h1>{Status}</h1>;
   }
 
   render() {
@@ -75,6 +115,7 @@ export default class CreateEventPage extends React.Component {
                  id="filled-required"
                  variant="filled"
                  fullWidth
+                 placeholder='Name your event'
                  />
                 </Grid>
                 <Grid item xs={4}>
@@ -86,15 +127,15 @@ export default class CreateEventPage extends React.Component {
                   <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
                     <InputLabel id="select-sport-label">Sport</InputLabel>
                     <Select
-                      labelId="demo-simple-select-standard-label"
-                      id="demo-simple-select-standard"
+                      required
+                      labelId="Sport-select-label"
+                      id="select-standard"
                       value={this.state.sport}
                       onChange={this.sportHandleChange}
                       label="Sport"
+                      defaultValue=""
                     >
-                      <MenuItem value="">
-                        <em>None</em>
-                      </MenuItem>
+                      <MenuItem value="">None</MenuItem>
                       <MenuItem value='Badminton'>Badminton</MenuItem>
                       <MenuItem value='Basketball'>Basketball</MenuItem>
                       <MenuItem value='Bowling'>Bowling</MenuItem>
@@ -111,6 +152,21 @@ export default class CreateEventPage extends React.Component {
                       <MenuItem value='Volleyball'>Volleyball</MenuItem>
                     </Select>
                   </FormControl>
+                </Grid>
+                <Grid item xs={4}>
+                  <Typography sx={{ mt: 2 }}>
+                    Participants (Maximum):
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <TextField
+                    required
+                    id="filled-required"
+                    variant="filled"
+                    type='number'
+                    inputProps={{ min: 1, max: 100, step: 1 }}
+                    defaultValue='1'
+                  />
                 </Grid>
                 <Grid item xs={4}>
                   <Typography sx={{ mt: 1 }}>
@@ -142,8 +198,8 @@ export default class CreateEventPage extends React.Component {
                   </LocalizationProvider>
                 </Grid>
                 <Grid item xs={4}>
-                  <Typography sx={{ mt: 1 }}>
-                    Location:
+                  <Typography sx={{ mt: 2 }}>
+                    Notes:
                   </Typography>
                 </Grid>
                 <Grid item xs={8}>
@@ -151,9 +207,13 @@ export default class CreateEventPage extends React.Component {
                     required
                     id="filled-required"
                     variant="filled"
+                    placeholder='Additional notes...'
                     fullWidth
+                    multiline
+                    rows={3}
                   />
                 </Grid>
+                <GmapsSetUp />
                 <hr />
                 <Grid item xs={12}>
                   <Button type='submit' variant='contained' fullWidth height='30px' sx={{ mt: 2 }}>

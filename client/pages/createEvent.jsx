@@ -31,10 +31,8 @@ export default class CreateEventPage extends React.Component {
   }
 
   onCreateEvent(event) {
-    // eslint-disable-next-line no-console
-    console.log(event);
     event.preventDefault();
-    const host = this.context.userId;
+    const host = this.context.user.userId;
     const eventName = event.target.elements[0].value;
     const sport = event.target.elements[1].value;
     const participant = event.target.elements[2].value;
@@ -47,26 +45,23 @@ export default class CreateEventPage extends React.Component {
     const payload = {
       host, eventName, sport, participant, date, time, note, location, lat, lng
     };
-    // eslint-disable-next-line no-console
-    console.log(payload);
-    // const req = {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify(payload)
-    // };
-    // fetch('/api/', req)
-    //   .then(res => res.json())
-    //   .then(result => {
-    //     const { error } = result;
-    //     if (error) {
-    //       this.setState({ alert: true });
-    //       return null;
-    //     }
-    //     this.setState({ signUpSuccess: true });
-    //   });
-    return null;
+    const req = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    };
+    fetch(`/api/createEvent/${host}`, req)
+      .then(res => res.json())
+      .then(data => {
+        const { error } = data;
+        if (error) {
+          return null;
+        }
+        const { eventId } = data;
+        return <Redirect to="event" eventId={eventId} />;
+      });
   }
 
   handleChange(event) {

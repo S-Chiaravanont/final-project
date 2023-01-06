@@ -15,7 +15,7 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import GmapsSetUp from '../components/gmapsSetUp';
+import Home from '../components/gmapsSetUp';
 
 export default class CreateEventPage extends React.Component {
   constructor(props) {
@@ -103,7 +103,7 @@ export default class CreateEventPage extends React.Component {
                   </Typography>
                 </Grid>
                 <Grid item xs={4}>
-                  <Typography sx={{ mt: 2 }}>
+                  <Typography sx={{ mt: 1 }}>
                     Event Name:
                   </Typography>
                 </Grid>
@@ -152,7 +152,7 @@ export default class CreateEventPage extends React.Component {
                   </FormControl>
                 </Grid>
                 <Grid item xs={4}>
-                  <Typography sx={{ mt: 2 }}>
+                  <Typography sx={{ mt: 1 }}>
                     Participants (Maximum):
                   </Typography>
                 </Grid>
@@ -196,7 +196,7 @@ export default class CreateEventPage extends React.Component {
                   </LocalizationProvider>
                 </Grid>
                 <Grid item xs={4}>
-                  <Typography sx={{ mt: 2 }}>
+                  <Typography sx={{ mt: 1 }}>
                     Notes:
                   </Typography>
                 </Grid>
@@ -211,7 +211,7 @@ export default class CreateEventPage extends React.Component {
                     rows={3}
                   />
                 </Grid>
-                <GmapsSetUp />
+                <Home />
                 <hr />
                 <Grid item xs={12}>
                   <Button type='submit' variant='contained' fullWidth height='30px' sx={{ mt: 2 }}>

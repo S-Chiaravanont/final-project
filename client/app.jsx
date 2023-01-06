@@ -62,7 +62,7 @@ export default class App extends React.Component {
       return <SuccessAlerts />;
     } else if (path === 'createEvent') {
       return <CreateEventPage />;
-    } else if (path === 'event') {
+    } else if (path === 'events') {
       const eventId = params.get('eventId');
       return <EventPage eventId={eventId} />;
     }

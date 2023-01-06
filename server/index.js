@@ -136,6 +136,38 @@ app.post('/api/createEvent/:userId', (req, res, next) => {
 
 });
 
+app.get('/api/event/:eventId', (req, res, next) => {
+  const eventId = Number(req.params.eventId);
+  if (eventId < 1) {
+    throw new ClientError(400, 'eventId is not valid, must be greater than 0');
+  }
+  const sql = `
+    select "sport",
+           "note",
+           "participant",
+           "date",
+           "time",
+           "eventName",
+           "location",
+           "userId",
+           "lat",
+           "lng",
+           "fullName"
+      from "events"
+      join "users" using ("userId")
+      join "eventLocations" using ("eventId")
+      join "locations" using ("locationId")
+      where "eventId" = $1
+  `;
+  const params = [eventId];
+  db.query(sql, params)
+    .then(result => {
+      const events = result.rows;
+      res.status(200).json(events);
+    })
+    .catch(err => next(err));
+});
+
 app.use(staticMiddleware);
 
 app.use(errorMiddleware);

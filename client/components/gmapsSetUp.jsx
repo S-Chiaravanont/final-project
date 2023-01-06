@@ -11,14 +11,19 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
-export default function Home() {
+export default function Home(props) {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ['places']
   });
 
   if (!isLoaded) return <div>Loading...</div>;
-  return <Map />;
+  if (Object.keys(props).length < 1) {
+    return <Map />;
+  } else {
+    const { location, lat, lng } = props;
+    return <DisplayMap location={location} lat={lat} lng={lng} />;
+  }
 }
 
 function Map() {
@@ -122,3 +127,31 @@ const PlacesAutocomplete = ({ setSelected }) => {
     </div>
   );
 };
+
+function DisplayMap(props) {
+  const lat = Number(props.lat);
+  const lng = Number(props.lng);
+  const center = { lat, lng };
+  return (
+    <>
+      <Grid item xs={4}>
+        <Typography sx={{ mt: 1 }}>
+          Location:
+        </Typography>
+      </Grid>
+      <Grid item xs={8}>
+        <Typography sx={{ mt: 1 }}>
+          {props.location}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <GoogleMap
+          zoom={14}
+          center={center}
+          mapContainerClassName="map-container">
+          <Marker position={center} />
+        </GoogleMap>
+      </Grid>
+    </>
+  );
+}

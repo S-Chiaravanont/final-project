@@ -7,16 +7,19 @@ import LoginPage from './pages/login';
 import SignUpPage from './pages/signup';
 import SuccessAlerts from './components/successAlert';
 import CreateEventPage from './pages/createEvent';
+import EventPage from './pages/event';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       user: null,
-      route: parseRoute(window.location.hash)
+      route: parseRoute(window.location.hash),
+      eventId: null
     };
     this.handleSignIn = this.handleSignIn.bind(this);
     this.handleSignOut = this.handleSignOut.bind(this);
+    this.handleEventId = this.handleEventId.bind(this);
   }
 
   componentDidMount() {
@@ -25,6 +28,12 @@ export default class App extends React.Component {
         route: parseRoute(window.location.hash)
       });
     });
+  }
+
+  handleEventId(result) {
+    const eventId = result;
+    this.setState({ eventId });
+    window.location.replace(`#event/${eventId}`);
   }
 
   handleSignIn(result) {
@@ -39,8 +48,8 @@ export default class App extends React.Component {
     window.location.replace('#home');
   }
 
-  renderThisPage() {
-    const { path } = this.state.route;
+  renderThisPage(data) {
+    const { path, params } = this.state.route;
     if (path === 'home' || path === '') {
       return <Home />;
     } else if (path === 'account') {
@@ -53,13 +62,16 @@ export default class App extends React.Component {
       return <SuccessAlerts />;
     } else if (path === 'createEvent') {
       return <CreateEventPage />;
+    } else if (path === 'event') {
+      const eventId = params.get('eventId');
+      return <EventPage eventId={eventId} />;
     }
   }
 
   render() {
     const { user } = this.state;
-    const { handleSignIn, handleSignOut } = this;
-    const contextValue = { user, handleSignIn, handleSignOut };
+    const { handleSignIn, handleSignOut, handleEventId } = this;
+    const contextValue = { user, handleSignIn, handleSignOut, handleEventId };
     return (
       <AppContext.Provider value={contextValue}>
         <>

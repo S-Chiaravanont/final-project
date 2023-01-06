@@ -87,9 +87,13 @@ app.get('/api/user/:userId', (req, res, next) => {
     select "sport",
            "date",
            "time",
-           "eventName"
+           "eventName",
+           "location",
+           "eventId"
       from "events"
       join "users" using ("userId")
+      join "eventLocations" using ("eventId")
+      join "locations" using ("locationId")
       where "userId" = $1
   `;
   const params = [id];

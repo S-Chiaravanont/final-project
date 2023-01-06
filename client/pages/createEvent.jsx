@@ -57,10 +57,11 @@ export default class CreateEventPage extends React.Component {
       .then(data => {
         const { error } = data;
         if (error) {
+          // eslint-disable-next-line no-console
+          console.log(error);
           return null;
         }
-        const { eventId } = data;
-        return <Redirect to="event" eventId={eventId} />;
+        return <Redirect to="home" />;
       });
   }
 

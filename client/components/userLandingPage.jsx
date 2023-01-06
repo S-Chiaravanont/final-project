@@ -70,12 +70,11 @@ export default class LandingPage extends React.Component {
                 <AccordionDetails>
                   <hr />
                   <Typography>
-                    Page: Event Link Here <br />
+                    Page: <a href={`#events?eventId=${event.eventId}`}>Event Link Here</a> <br />
                     Event: {event.eventName} <br />
                     Date: {event.date} <br />
                     Time: {event.time} <br />
-                    Location: TBD <br />
-                    Map: map_placeholder
+                    Location: {event.location} <br />
                   </Typography>
                 </AccordionDetails>
               </Accordion>

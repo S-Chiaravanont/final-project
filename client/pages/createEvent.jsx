@@ -15,7 +15,7 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Home from '../components/gmapsSetUp';
+import GmapsSetUp from '../components/gmapsSetUp';
 
 export default class CreateEventPage extends React.Component {
   constructor(props) {
@@ -45,10 +45,12 @@ export default class CreateEventPage extends React.Component {
     const payload = {
       host, eventName, sport, participant, date, time, note, location, lat, lng
     };
+    const jwt = window.localStorage.getItem('react-context-jwt');
     const req = {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-access-token': jwt
       },
       body: JSON.stringify(payload)
     };
@@ -61,7 +63,8 @@ export default class CreateEventPage extends React.Component {
           console.log(error);
           return null;
         }
-        return <Redirect to="home" />;
+        window.location.replace('#home');
+        return null;
       });
   }
 
@@ -80,7 +83,7 @@ export default class CreateEventPage extends React.Component {
 
   render() {
     if (!this.context.user) {
-      return <Redirect to="home" />;
+      return <Redirect to="#home" />;
     } else {
       return (
         <form onSubmit={this.onCreateEvent}>
@@ -211,7 +214,7 @@ export default class CreateEventPage extends React.Component {
                     rows={3}
                   />
                 </Grid>
-                <Home />
+                <GmapsSetUp />
                 <hr />
                 <Grid item xs={12}>
                   <Button type='submit' variant='contained' fullWidth height='30px' sx={{ mt: 2 }}>

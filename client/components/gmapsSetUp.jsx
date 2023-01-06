@@ -11,7 +11,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
-export default function Home(props) {
+export default function GmapsSetUp(props) {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ['places']
@@ -76,12 +76,9 @@ const PlacesAutocomplete = ({ setSelected }) => {
 
   const handleSelect = ({ description }) =>
     () => {
-      // When user selects a place, we can replace the keyword without request data from API
-      // by setting the second parameter to "false"
       setValue(description, false);
       clearSuggestions();
 
-      // Get latitude and longitude via utility functions
       getGeocode({ address: description }).then(results => {
         const { lat, lng } = getLatLng(results[0]);
         setSelected({ lat, lng });
@@ -89,7 +86,6 @@ const PlacesAutocomplete = ({ setSelected }) => {
     };
 
   const handleInput = e => {
-    // Update the keyword of the input element
     setValue(e.target.value);
   };
 
@@ -139,7 +135,7 @@ function DisplayMap(props) {
           Location:
         </Typography>
       </Grid>
-      <Grid item xs={8}>
+      <Grid item xs={8} bgcolor='rgb(255,250,255)' borderRadius='2px' borderBottom='1px solid black'>
         <Typography sx={{ mt: 1 }}>
           {props.location}
         </Typography>

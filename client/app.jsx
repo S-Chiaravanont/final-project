@@ -8,18 +8,17 @@ import SignUpPage from './pages/signup';
 import SuccessAlerts from './components/successAlert';
 import CreateEventPage from './pages/createEvent';
 import EventPage from './pages/event';
+import jwtDecode from 'jwt-decode';
 
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       user: null,
-      route: parseRoute(window.location.hash),
-      eventId: null
+      route: parseRoute(window.location.hash)
     };
     this.handleSignIn = this.handleSignIn.bind(this);
     this.handleSignOut = this.handleSignOut.bind(this);
-    this.handleEventId = this.handleEventId.bind(this);
   }
 
   componentDidMount() {
@@ -28,12 +27,9 @@ export default class App extends React.Component {
         route: parseRoute(window.location.hash)
       });
     });
-  }
-
-  handleEventId(result) {
-    const eventId = result;
-    this.setState({ eventId });
-    window.location.replace(`#event/${eventId}`);
+    const token = window.localStorage.getItem('react-context-jwt');
+    const user = token ? jwtDecode(token) : null;
+    this.setState({ user });
   }
 
   handleSignIn(result) {
@@ -70,8 +66,8 @@ export default class App extends React.Component {
 
   render() {
     const { user } = this.state;
-    const { handleSignIn, handleSignOut, handleEventId } = this;
-    const contextValue = { user, handleSignIn, handleSignOut, handleEventId };
+    const { handleSignIn, handleSignOut } = this;
+    const contextValue = { user, handleSignIn, handleSignOut };
     return (
       <AppContext.Provider value={contextValue}>
         <>

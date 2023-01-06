@@ -18,8 +18,15 @@ export default class LandingPage extends React.Component {
   }
 
   componentDidMount(props) {
+    const jwt = window.localStorage.getItem('react-context-jwt');
+    const req = {
+      method: 'GET',
+      headers: {
+        'x-access-token': jwt
+      }
+    };
     const { userId } = this.context.user;
-    fetch(`/api/user/${userId}`)
+    fetch(`/api/user/${userId}`, req)
       .then(res => res.json())
       .then(data => {
         this.setState({ events: data });

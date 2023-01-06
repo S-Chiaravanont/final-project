@@ -2,7 +2,7 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Home from '../components/gmapsSetUp';
+import GmapsSetUp from '../components/gmapsSetUp';
 
 export default class EventPage extends React.Component {
   constructor(props) {
@@ -13,8 +13,15 @@ export default class EventPage extends React.Component {
   }
 
   componentDidMount() {
+    const jwt = window.localStorage.getItem('react-context-jwt');
+    const req = {
+      method: 'GET',
+      headers: {
+        'x-access-token': jwt
+      }
+    };
     const eventId = this.props.eventId;
-    fetch(`/api/event/${eventId}`)
+    fetch(`/api/event/${eventId}`, req)
       .then(res => res.json())
       .then(data => {
         this.setState({ event: data[0] });
@@ -36,12 +43,12 @@ export default class EventPage extends React.Component {
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography sx={{ mt: 2 }}>
+                <Typography sx={{ mt: 1 }}>
                   Host:
                 </Typography>
               </Grid>
-              <Grid item xs={8}>
-                <Typography sx={{ mt: 2 }}>
+              <Grid item xs={8} bgcolor='rgb(240,240,240)' borderRadius='2px' borderBottom='1px solid black'>
+                <Typography sx={{ mt: 1 }}>
                   {fullName}
                 </Typography>
               </Grid>
@@ -50,7 +57,7 @@ export default class EventPage extends React.Component {
                   Event Name:
                 </Typography>
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={8} bgcolor='rgb(255,250,255)' borderRadius='2px' borderBottom='1px solid black'>
                 <Typography sx={{ mt: 1 }}>
                   {eventName}
                 </Typography>
@@ -60,7 +67,7 @@ export default class EventPage extends React.Component {
                   Sport:
                 </Typography>
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={8} bgcolor='rgb(240,240,240)' borderRadius='2px' borderBottom='1px solid black'>
                 <Typography sx={{ mt: 1 }}>
                   {sport}
                 </Typography>
@@ -70,7 +77,7 @@ export default class EventPage extends React.Component {
                   Participants (Maximum):
                 </Typography>
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={8} bgcolor='rgb(255,250,255)' borderRadius='2px' borderBottom='1px solid black'>
                 <Typography sx={{ mt: 1 }}>
                   {participant}
                 </Typography>
@@ -80,7 +87,7 @@ export default class EventPage extends React.Component {
                   Date:
                 </Typography>
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={8} bgcolor='rgb(240,240,240)' borderRadius='2px' borderBottom='1px solid black'>
                 <Typography sx={{ mt: 1 }}>
                   {date}
                 </Typography>
@@ -90,7 +97,7 @@ export default class EventPage extends React.Component {
                   Time:
                 </Typography>
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={8} bgcolor='rgb(255,250,255)' borderRadius='2px' borderBottom='1px solid black'>
                 <Typography sx={{ mt: 1 }}>
                   {time}
                 </Typography>
@@ -100,12 +107,12 @@ export default class EventPage extends React.Component {
                   Notes:
                 </Typography>
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={8} bgcolor='rgb(240,240,240)' borderRadius='2px' borderBottom='1px solid black'>
                 <Typography sx={{ mt: 1 }}>
                   {note}
                 </Typography>
               </Grid>
-              <Home location={location} lat={lat} lng={lng} />
+              <GmapsSetUp location={location} lat={lat} lng={lng} />
               <hr />
             </Grid>
           </Box>

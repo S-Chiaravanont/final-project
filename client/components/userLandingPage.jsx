@@ -18,8 +18,15 @@ export default class LandingPage extends React.Component {
   }
 
   componentDidMount(props) {
+    const jwt = window.localStorage.getItem('react-context-jwt');
+    const req = {
+      method: 'GET',
+      headers: {
+        'x-access-token': jwt
+      }
+    };
     const { userId } = this.context.user;
-    fetch(`/api/user/${userId}`)
+    fetch(`/api/user/${userId}`, req)
       .then(res => res.json())
       .then(data => {
         this.setState({ events: data });
@@ -42,7 +49,8 @@ export default class LandingPage extends React.Component {
             <Button variant='contained' color='error' size='medium' sx={{ flexGrow: 0.1 }}>
               SEARCH
             </Button>
-            <Button variant='contained' size='medium' color='error' sx={{ flexGrow: 0.1 }}>
+            <Button variant='contained' size='medium' href='#createEvent'
+            color='error' sx={{ flexGrow: 0.1 }}>
               CREATE
             </Button>
           </Box>
@@ -69,12 +77,11 @@ export default class LandingPage extends React.Component {
                 <AccordionDetails>
                   <hr />
                   <Typography>
-                    Page: Event Link Here <br />
+                    Page: <a href={`#events?eventId=${event.eventId}`}>Event Link Here</a> <br />
                     Event: {event.eventName} <br />
                     Date: {event.date} <br />
                     Time: {event.time} <br />
-                    Location: TBD <br />
-                    Map: map_placeholder
+                    Location: {event.location} <br />
                   </Typography>
                 </AccordionDetails>
               </Accordion>

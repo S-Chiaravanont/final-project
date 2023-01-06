@@ -117,7 +117,7 @@ export default class SignUpPage extends React.Component {
             <Box>
               <TextField
               required
-              id="filled-required"
+              id="filled-username-required"
               variant="filled"
               fullWidth
             />
@@ -140,7 +140,7 @@ export default class SignUpPage extends React.Component {
             <Box>
               <TextField
               required
-              id="filled-password-input"
+              id="filled-name-input"
               variant="filled"
               fullWidth
             />

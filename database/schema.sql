@@ -30,6 +30,8 @@ CREATE TABLE "public"."events" (
 	"date" TEXT NOT NULL,
 	"time" TEXT NOT NULL,
 	"eventName" TEXT NOT NULL,
+  "note" TEXT NOT NULL,
+  "participant" TEXT NOT NULL,
 	"createdAt" TIMESTAMP NOT NULL DEFAULT now(),
 	CONSTRAINT "events_pk" PRIMARY KEY ("eventId")
 ) WITH (
@@ -63,6 +65,8 @@ CREATE TABLE "public"."eventLocations" (
 CREATE TABLE "public"."locations" (
 	"locationId" serial NOT NULL,
 	"location" TEXT NOT NULL,
+  "lat" TEXT NOT NULL,
+  "lng" TEXT NOT NULL,
 	CONSTRAINT "locations_pk" PRIMARY KEY ("locationId")
 ) WITH (
   OIDS=FALSE

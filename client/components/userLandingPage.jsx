@@ -13,8 +13,10 @@ export default class LandingPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      events: null
+      events: null,
+      searchBar: 'none'
     };
+    this.searchButtonClick = this.searchButtonClick.bind(this);
   }
 
   componentDidMount(props) {
@@ -33,8 +35,13 @@ export default class LandingPage extends React.Component {
       });
   }
 
+  searchButtonClick() {
+    this.state.searchBar === 'none' ? this.setState({ searchBar: 'flex' }) : this.setState({ searchBar: 'none' });
+  }
+
   render() {
     const { fullName } = this.context.user;
+    const searchBar = this.state.searchBar;
     if (!this.state.events) {
       return null;
     } else {
@@ -46,7 +53,8 @@ export default class LandingPage extends React.Component {
           </Typography>
           <Box marginBottom='30px' display='flex' justifyContent='space-evenly'
           sx={{ flexGrow: 1, display: 'flex' }}>
-            <Button variant='contained' color='error' size='medium' sx={{ flexGrow: 0.1 }}>
+            <Button variant='contained' color='error' size='medium' sx={{ flexGrow: 0.1 }}
+            onClick={this.searchButtonClick}>
               SEARCH
             </Button>
             <Button variant='contained' size='medium' href='#createEvent'
@@ -54,7 +62,20 @@ export default class LandingPage extends React.Component {
               CREATE
             </Button>
           </Box>
-
+          <Box sx={{ mb: 1 }} display={searchBar} bgcolor='rgba(150,150,150,0.3)' height='200px' padding='20px'>
+            <Box>
+              <Typography variant='h6'>Search Event:</Typography>
+            </Box>
+            <Box>
+              <Typography>Sport:</Typography>
+            </Box>
+            <Box>
+              <Typography>Zip Code:</Typography>
+            </Box>
+            <Box>
+              <Typography>Search Radius</Typography>
+            </Box >
+          </Box>
           <Box
           backgroundColor='rgb(1, 112, 117)' height='4rem'
           borderRadius='5px' display='flex' alignItems='center'

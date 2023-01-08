@@ -8,15 +8,25 @@ import AppContext from '../lib/app-context';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import Grid from '@mui/material/Grid';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import TextField from '@mui/material/TextField';
 
 export default class LandingPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       events: null,
-      searchBar: 'none'
+      searchBar: 'none',
+      sport: '',
+      radius: '5'
     };
     this.searchButtonClick = this.searchButtonClick.bind(this);
+    this.sportHandleChange = this.sportHandleChange.bind(this);
+    this.radiusHandleChange = this.radiusHandleChange.bind(this);
+    this.onSearch = this.onSearch.bind(this);
   }
 
   componentDidMount(props) {
@@ -37,6 +47,26 @@ export default class LandingPage extends React.Component {
 
   searchButtonClick() {
     this.state.searchBar === 'none' ? this.setState({ searchBar: 'flex' }) : this.setState({ searchBar: 'none' });
+  }
+
+  sportHandleChange(event) {
+    const selectedSport = event.target.value;
+    this.setState({ sport: selectedSport });
+  }
+
+  radiusHandleChange(event) {
+    const selectedRadius = event.target.value;
+    this.setState({ radius: selectedRadius });
+  }
+
+  onSearch(event) {
+    event.preventDefault();
+    const sport = event.target.elements[0].value;
+    const zipCode = event.target.elements[1].value;
+    const radius = event.target.elements[2].value;
+    const newHash = `search?sport=${sport}?zipCode=${zipCode}?radius=${radius}`;
+    window.location.replace(newHash);
+    return null;
   }
 
   render() {
@@ -62,19 +92,94 @@ export default class LandingPage extends React.Component {
               CREATE
             </Button>
           </Box>
-          <Box sx={{ mb: 1 }} display={searchBar} bgcolor='rgba(150,150,150,0.3)' height='200px' padding='20px'>
-            <Box>
-              <Typography variant='h6'>Search Event:</Typography>
-            </Box>
-            <Box>
-              <Typography>Sport:</Typography>
-            </Box>
-            <Box>
-              <Typography>Zip Code:</Typography>
-            </Box>
-            <Box>
-              <Typography>Search Radius</Typography>
-            </Box >
+          <Box sx={{ mb: 1 }} display={searchBar} bgcolor='rgba(150,150,150,0.3)' height='280px' padding='20px'>
+            <form onSubmit={this.onSearch}>
+              <Box maxWidth='md' margin='auto'>
+                <Box sx={{ flexGrow: 1, p: 1 }}>
+                  <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                      <Typography variant='h6'>
+                        Search Event:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Typography>
+                        Sport:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={8}>
+                      <FormControl variant="standard" sx={{ minWidth: 120 }}>
+                        <Select
+                        required
+                        labelId="Sport-select-label"
+                        id="select-standard"
+                        value={this.state.sport}
+                        onChange={this.sportHandleChange}
+                        defaultValue=""
+                      >
+                          <MenuItem value="">None</MenuItem>
+                          <MenuItem value='Badminton'>Badminton</MenuItem>
+                          <MenuItem value='Basketball'>Basketball</MenuItem>
+                          <MenuItem value='Bowling'>Bowling</MenuItem>
+                          <MenuItem value='Climbing'>Climbing</MenuItem>
+                          <MenuItem value='Cycling'>Cycling</MenuItem>
+                          <MenuItem value='Football'>Football</MenuItem>
+                          <MenuItem value='Golf'>Golf</MenuItem>
+                          <MenuItem value='Ice skating'>Ice skating</MenuItem>
+                          <MenuItem value='Laser tage'>Laser Tag</MenuItem>
+                          <MenuItem value='Ping pong'>Ping pong</MenuItem>
+                          <MenuItem value='Soccer'>Soccer</MenuItem>
+                          <MenuItem value='Swimming'>Swimming</MenuItem>
+                          <MenuItem value='Tennis'>Tennis</MenuItem>
+                          <MenuItem value='Volleyball'>Volleyball</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Typography>
+                        Zip Code:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={8}>
+                      <TextField
+                      required
+                      size='small'
+                      id="filled-required"
+                      variant="filled"
+                      width='200px'
+                    />
+                    </Grid>
+                    <Grid item xs={4}>
+                      <Typography>
+                        Search Radius:
+                      </Typography>
+                    </Grid>
+                    <Grid item xs={8}>
+                      <FormControl variant="standard" sx={{ minWidth: 120 }}>
+                        <Select
+                        required
+                        labelId="Radius-select-label"
+                        id="select-standard"
+                        value={this.state.radius}
+                        onChange={this.radiusHandleChange}
+                        defaultValue="5"
+                      >
+                          <MenuItem value='5'>5 miles</MenuItem>
+                          <MenuItem value='10'>10 miles</MenuItem>
+                          <MenuItem value='25'>25 miles</MenuItem>
+                          <MenuItem value='50'>50 miles</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Button type='submit' variant='contained' fullWidth height='30px' sx={{ mt: 2 }}>
+                        Search
+                      </Button>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Box>
+            </form>
           </Box>
           <Box
           backgroundColor='rgb(1, 112, 117)' height='4rem'

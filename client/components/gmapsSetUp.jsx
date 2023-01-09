@@ -20,6 +20,9 @@ export default function GmapsSetUp(props) {
   if (!isLoaded) return <div>Loading...</div>;
   if (Object.keys(props).length < 1) {
     return <Map />;
+  } else if (Object.keys(props).length === 1) {
+    const { zipCode } = props;
+    return <ZipLatLng zipCode={zipCode} />;
   } else {
     const { location, lat, lng } = props;
     return <DisplayMap location={location} lat={lat} lng={lng} />;
@@ -150,4 +153,13 @@ function DisplayMap(props) {
       </Grid>
     </>
   );
+}
+
+function ZipLatLng(props) {
+  const zipCode = props.zipCode;
+  getGeocode({ address: zipCode }).then(results => {
+    const { lat, lng } = getLatLng(results[0]);
+    const latLng = { lat, lng };
+    return latLng;
+  });
 }

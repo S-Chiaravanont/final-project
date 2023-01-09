@@ -9,6 +9,7 @@ import SuccessAlerts from './components/successAlert';
 import CreateEventPage from './pages/createEvent';
 import EventPage from './pages/event';
 import jwtDecode from 'jwt-decode';
+import SearchPage from './pages/search';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -61,6 +62,8 @@ export default class App extends React.Component {
     } else if (path === 'events') {
       const eventId = params.get('eventId');
       return <EventPage eventId={eventId} />;
+    } else if (path === 'search') {
+      return <SearchPage params={params} />;
     }
   }
 

@@ -66,7 +66,6 @@ export default class LandingPage extends React.Component {
     const radius = event.target.elements[2].value;
     const newHash = `search?sport=${sport}?zipCode=${zipCode}?radius=${radius}`;
     window.location.replace(newHash);
-    return null;
   }
 
   render() {

@@ -12,7 +12,7 @@ import Grid from '@mui/material/Grid';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
+import { GmapsSetUp } from './gmapsSetUp';
 
 export default class LandingPage extends React.Component {
   constructor(props) {
@@ -21,7 +21,8 @@ export default class LandingPage extends React.Component {
       events: null,
       searchBar: 'none',
       sport: '',
-      radius: '5'
+      radius: '5',
+      latLng: null
     };
     this.searchButtonClick = this.searchButtonClick.bind(this);
     this.sportHandleChange = this.sportHandleChange.bind(this);
@@ -62,9 +63,11 @@ export default class LandingPage extends React.Component {
   onSearch(event) {
     event.preventDefault();
     const sport = event.target.elements[0].value;
-    const zipCode = event.target.elements[1].value;
-    const radius = event.target.elements[2].value;
-    const newHash = `search?sport=${sport}?zipCode=${zipCode}?radius=${radius}`;
+    const lat = event.target.elements[1].value;
+    const lng = event.target.elements[2].value;
+    const city = event.target.elements[3].value;
+    const radius = event.target.elements[4].value;
+    const newHash = `#search?sport=${sport}&city=${city}&lat=${lat}&lng=${lng}&radius=${radius}`;
     window.location.replace(newHash);
   }
 
@@ -136,17 +139,11 @@ export default class LandingPage extends React.Component {
                     </Grid>
                     <Grid item xs={4}>
                       <Typography>
-                        Zip Code:
+                        City:
                       </Typography>
                     </Grid>
                     <Grid item xs={8}>
-                      <TextField
-                      required
-                      size='small'
-                      id="filled-required"
-                      variant="filled"
-                      width='200px'
-                    />
+                      <GmapsSetUp search={true} />
                     </Grid>
                     <Grid item xs={4}>
                       <Typography>

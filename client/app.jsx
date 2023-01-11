@@ -63,7 +63,12 @@ export default class App extends React.Component {
       const eventId = params.get('eventId');
       return <EventPage eventId={eventId} />;
     } else if (path === 'search') {
-      return <SearchPage params={params} />;
+      const sport = params.get('sport');
+      const city = params.get('city');
+      const lat = params.get('lat');
+      const lng = params.get('lng');
+      const radius = params.get('radius');
+      return <SearchPage sport={sport} city={city} lat={lat} lng={lng} radius={radius} />;
     }
   }
 

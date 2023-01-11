@@ -15,7 +15,7 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import GmapsSetUp from '../components/gmapsSetUp';
+import { GmapsSetUp } from '../components/gmapsSetUp';
 
 export default class CreateEventPage extends React.Component {
   constructor(props) {

@@ -172,6 +172,36 @@ app.get('/api/event/:eventId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.post('/api/search/', (req, res, next) => {
+  const { sport, latLngLimit } = req.body;
+  const { upperLimit, lowerLimit, leftLimit, rightLimit } = latLngLimit;
+  const sql = `
+    select "sport",
+           "note",
+           "participant",
+           "date",
+           "time",
+           "eventName",
+           "location",
+           "userId",
+           "lat",
+           "lng",
+           "fullName"
+      from "events"
+      join "users" using ("userId")
+      join "eventLocations" using ("eventId")
+      join "locations" using ("locationId")
+      where "sport" = $1
+  `;
+  const params = [sport, upperLimit, lowerLimit, leftLimit, rightLimit];
+  db.query(sql, params)
+    .then(result => {
+      const events = result.rows;
+      res.status(200).json(events);
+    })
+    .catch(err => next(err));
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {

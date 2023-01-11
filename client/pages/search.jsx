@@ -1,36 +1,43 @@
 import React from 'react';
-// import GmapsSetUp from '../components/gmapsSetUp';
+import latLngConversion from '../components/latLngConverter';
+// import { GmapsSetUp } from '../components/gmapsSetUp';
 
 export default class SearchPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      events: null,
+      city: null
+    };
   }
 
-  componentDidMount(props) {
+  componentDidMount() {
+    const { sport, lat, lng, city, radius } = this.props;
+    const latLng = { lat, lng };
+    const latLngLimit = latLngConversion(latLng, radius);
+    const payload = { sport, latLngLimit };
     const jwt = window.localStorage.getItem('react-context-jwt');
     const req = {
-      method: 'GET',
+      method: 'POST',
       headers: {
         'x-access-token': jwt
-      }
+      },
+      body: JSON.stringify(payload)
     };
-    // const { sport, zipCode, radius } = this.props.params;
-    // const latLng = <GmapsSetUp zipCode={zipCode} />;
-    // const sql = `
-
-    // `;
     fetch('/api/search/', req)
       .then(res => res.json())
       .then(data => {
-        this.setState({ events: data });
+        this.setState({ events: data, city });
       });
   }
 
   render() {
-    // console.log(this.props.params);
-    return (
-      <h1>Hello world</h1>
-    );
+    if (!this.state.events) {
+      return null;
+    } else {
+      return (
+        <h1>Hello world</h1>
+      );
+    }
   }
 }

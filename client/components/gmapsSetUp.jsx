@@ -11,18 +11,16 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 
-export default function GmapsSetUp(props) {
+export function GmapsSetUp(props) {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: ['places']
   });
-
   if (!isLoaded) return <div>Loading...</div>;
   if (Object.keys(props).length < 1) {
     return <Map />;
-  } else if (Object.keys(props).length === 1) {
-    const { zipCode } = props;
-    return <ZipLatLng zipCode={zipCode} />;
+  } else if (props.search) {
+    return <SearchAutocomplete />;
   } else {
     const { location, lat, lng } = props;
     return <DisplayMap location={location} lat={lat} lng={lng} />;
@@ -75,7 +73,12 @@ const PlacesAutocomplete = ({ setSelected }) => {
     setValue,
     suggestions: { status, data },
     clearSuggestions
-  } = usePlacesAutocomplete({ debounce: 300 });
+  } = usePlacesAutocomplete({
+    requestOptions: {
+      componentRestrictions: { country: 'us' }
+    },
+    debounce: 300
+  });
 
   const handleSelect = ({ description }) =>
     () => {
@@ -122,7 +125,7 @@ const PlacesAutocomplete = ({ setSelected }) => {
         placeholder='Search address...'
       />
       {status === 'OK' &&
-      <List>{renderSuggestions()}</List>}
+        <List sx={{ position: 'absolute', zIndex: '5', bgcolor: 'white', border: '1px solid black' }}>{renderSuggestions()}</List>}
     </div>
   );
 };
@@ -155,11 +158,83 @@ function DisplayMap(props) {
   );
 }
 
-function ZipLatLng(props) {
-  const zipCode = props.zipCode;
-  getGeocode({ address: zipCode }).then(results => {
-    const { lat, lng } = getLatLng(results[0]);
-    const latLng = { lat, lng };
-    return latLng;
+function SearchAutocomplete() {
+  const [selected, setSelected] = useState({ lat: 34.0522342, lng: -118.2436849 });
+  const {
+    ready,
+    value,
+    setValue,
+    suggestions: { status, data },
+    clearSuggestions
+  } = usePlacesAutocomplete({
+    requestOptions: {
+      componentRestrictions: { country: 'us' },
+      setTypes: '(cities)'
+    },
+    debounce: 300
   });
+
+  const handleSelect = ({ description }) =>
+    () => {
+      setValue(description, false);
+      clearSuggestions();
+
+      getGeocode({ address: description }).then(results => {
+        const { lat, lng } = getLatLng(results[0]);
+        setSelected({ lat, lng });
+      });
+    };
+
+  const handleInput = e => {
+    setValue(e.target.value);
+  };
+
+  const renderSuggestions = () =>
+    data.map(suggestion => {
+      const {
+        place_id,
+        structured_formatting: { main_text, secondary_text }
+      } = suggestion;
+
+      return (
+        <ListItem key={place_id} onClick={handleSelect(suggestion)}>
+          <ListItemButton>
+            <ListItemText>
+              <strong>{main_text}</strong> <small>{secondary_text}</small>
+            </ListItemText>
+          </ListItemButton>
+        </ListItem>
+      );
+    });
+
+  return (
+    <div onSelect={handleSelect}>
+      <TextField
+        id="lat"
+        variant="filled"
+        fullWidth
+        sx={{ display: 'none' }}
+        value={selected.lat}
+      />
+      <TextField
+        id="lng"
+        variant="filled"
+        fullWidth
+        sx={{ display: 'none' }}
+        value={selected.lng}
+      />
+      <TextField
+        required
+        variant="filled"
+        fullWidth
+        value={value}
+        disabled={!ready}
+        onChange={handleInput}
+        placeholder='Search address...'
+        sx={{ position: 'relative' }}
+      />
+      {status === 'OK' &&
+        <List sx={{ position: 'absolute', zIndex: '5', bgcolor: 'white', border: '1px solid black' }}>{renderSuggestions()}</List>}
+    </div>
+  );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import GmapsSetUp from '../components/gmapsSetUp';
+import { GmapsSetUp } from '../components/gmapsSetUp';
 
 export default class EventPage extends React.Component {
   constructor(props) {

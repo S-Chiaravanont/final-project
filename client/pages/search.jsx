@@ -12,6 +12,7 @@ import Grid from '@mui/material/Grid';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 
 export default class SearchPage extends React.Component {
   constructor(props) {
@@ -51,15 +52,7 @@ export default class SearchPage extends React.Component {
     const lng = event.target.elements[2].value;
     const city = event.target.elements[3].value;
     const radius = event.target.elements[4].value;
-    const newHash = `#search?sport=${sport}&city=${city}&lat=${lat}&lng=${lng}&radius=${radius}`;
-    this.setState({
-      events: null,
-      city: null,
-      radius: null,
-      searchBar: 'none',
-      searchRadius: '5',
-      sport: ''
-    });
+    const newHash = `#research?sport=${sport}&city=${city}&lat=${lat}&lng=${lng}&radius=${radius}`;
     window.location.replace(newHash);
   }
 
@@ -92,12 +85,20 @@ export default class SearchPage extends React.Component {
     if (!this.state.events) {
       return null;
     } else {
-      const markerLatLng = this.state.events.map(({ lat, lng }) => [{ lat: parseFloat(lat), lng: parseFloat(lng) }]);
       const { city, radius, events, searchBar } = this.state;
+      let markerLatLng;
+      if (events.length < 1) {
+        markerLatLng = [];
+      } else {
+        markerLatLng = this.state.events.map(({ lat, lng, ...rest }) => ({ lat: parseFloat(lat), lng: parseFloat(lng) }));
+      }
       return (
         <Box maxWidth='md' margin='auto' padding='30px'>
           <Typography variant='h4' marginBottom='10px'>
             Search Result:
+          </Typography>
+          <Typography variant='h6'>
+            Current search parameters: {this.props.sport}, {this.props.city}, {radius} miles
           </Typography>
           <GmapsSetUp markers={markerLatLng} center={city} radius={radius}/>
 
@@ -193,6 +194,13 @@ export default class SearchPage extends React.Component {
               </Box>
             </form>
           </Box>
+          <Box
+            backgroundColor='rgb(1, 112, 117)' height='4rem'
+            borderRadius='5px' display='flex' alignItems='center'
+            padding='10px' sx={{ flexGrow: 1 }}>
+            <EventAvailableIcon fontSize='large' sx={{ color: 'white', mr: 1 }} />
+            <Typography color='white'>{events.length} Events Found</Typography>
+          </Box>
           {
             events.map((event, index) => {
               return (
@@ -208,11 +216,12 @@ export default class SearchPage extends React.Component {
                   <AccordionDetails>
                     <hr />
                     <Typography>
-                      Page: <a href={`#events?eventId=${event.eventId}`}>Event Link Here</a> <br />
+                      Host: {event.fullName} <br />
                       Event: {event.eventName} <br />
                       Date: {event.date} <br />
                       Time: {event.time} <br />
                       Location: {event.location} <br />
+                      Page: <a href={`#events?eventId=${event.eventId}`}>Event Link Here</a> <br />
                     </Typography>
                   </AccordionDetails>
                 </Accordion>

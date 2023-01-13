@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
+import { GoogleMap, useLoadScript, Marker, MarkerF } from '@react-google-maps/api';
 import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
 import TextField from '@mui/material/TextField';
 import List from '@mui/material/List';
@@ -254,15 +254,26 @@ function SearchPageMap(props) {
   } else {
     zoom = 9;
   }
-
-  return (
-    <Grid item xs={12}>
-      <GoogleMap
+  const quantity = markers.length > 0;
+  if (quantity) {
+    return (
+      <Grid item xs={12}>
+        <GoogleMap
           zoom={zoom}
           center={center}
           mapContainerClassName="search-map-container">
-        {markers[0].map(marker => <Marker key={marker.lat} position={marker} />)}
-      </GoogleMap>
-    </Grid>
-  );
+          {markers.map(marker => <MarkerF key={marker.lat} position={marker} />)}
+        </GoogleMap>
+      </Grid>
+    );
+  } else {
+    return (
+      <Grid item xs={12}>
+        <GoogleMap
+          zoom={zoom}
+          center={center}
+          mapContainerClassName="search-map-container" />
+      </Grid>
+    );
+  }
 }

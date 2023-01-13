@@ -10,6 +10,7 @@ import CreateEventPage from './pages/createEvent';
 import EventPage from './pages/event';
 import jwtDecode from 'jwt-decode';
 import SearchPage from './pages/search';
+import ResearchPage from './pages/research';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -69,6 +70,13 @@ export default class App extends React.Component {
       const lng = params.get('lng');
       const radius = params.get('radius');
       return <SearchPage sport={sport} city={city} lat={lat} lng={lng} radius={radius} />;
+    } else if (path === 'research') {
+      const sport = params.get('sport');
+      const city = params.get('city');
+      const lat = params.get('lat');
+      const lng = params.get('lng');
+      const radius = params.get('radius');
+      return <ResearchPage sport={sport} city={city} lat={lat} lng={lng} radius={radius} />;
     }
   }
 

@@ -186,7 +186,8 @@ app.post('/api/search/', (req, res, next) => {
            "userId",
            "lat",
            "lng",
-           "fullName"
+           "fullName",
+           "eventId"
       from "events"
       join "users" using ("userId")
       join "eventLocations" using ("eventId")

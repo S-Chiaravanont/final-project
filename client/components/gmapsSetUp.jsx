@@ -21,6 +21,9 @@ export function GmapsSetUp(props) {
     return <Map />;
   } else if (props.search) {
     return <SearchAutocomplete />;
+  } else if (props.markers) {
+    const { markers, center, radius } = props;
+    return <SearchPageMap markers={markers} center={center} radius={radius} />;
   } else {
     const { location, lat, lng } = props;
     return <DisplayMap location={location} lat={lat} lng={lng} />;
@@ -236,5 +239,30 @@ function SearchAutocomplete() {
       {status === 'OK' &&
         <List sx={{ position: 'absolute', zIndex: '5', bgcolor: 'white', border: '1px solid black' }}>{renderSuggestions()}</List>}
     </div>
+  );
+}
+
+function SearchPageMap(props) {
+  const { markers, center, radius } = props;
+  let zoom;
+  if (parseInt(radius) === 5) {
+    zoom = 13;
+  } else if (parseInt(radius) === 10) {
+    zoom = 11;
+  } else if (parseInt(radius) === 25) {
+    zoom = 10;
+  } else {
+    zoom = 9;
+  }
+
+  return (
+    <Grid item xs={12}>
+      <GoogleMap
+          zoom={zoom}
+          center={center}
+          mapContainerClassName="search-map-container">
+        {markers[0].map(marker => <Marker key={marker.lat} position={marker} />)}
+      </GoogleMap>
+    </Grid>
   );
 }

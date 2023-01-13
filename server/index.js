@@ -130,7 +130,7 @@ app.post('/api/createEvent/:userId', (req, res, next) => {
       select "eventId", "locationId" from step_one, step_two
       returning "eventId"
   `;
-  const params = [id, eventName, sport, date, time, note, participant, location, lat, lng];
+  const params = [id, eventName, sport, date, time, note, participant, location, parseFloat(lat), parseFloat(lng)];
   db.query(sql, params)
     .then(result => {
       const eventId = result.rows;
@@ -192,6 +192,10 @@ app.post('/api/search/', (req, res, next) => {
       join "eventLocations" using ("eventId")
       join "locations" using ("locationId")
       where "sport" = $1
+      and lat < $2
+      and lat > $3
+      and lng > $4
+      and lng < $5
   `;
   const params = [sport, upperLimit, lowerLimit, leftLimit, rightLimit];
   db.query(sql, params)

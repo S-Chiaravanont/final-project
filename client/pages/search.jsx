@@ -1,49 +1,34 @@
 import React from 'react';
+import latLngConversion from '../components/latLngConverter';
+import { GmapsSetUp } from '../components/gmapsSetUp';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import EventAvailableIcon from '@mui/icons-material/EventAvailable';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import AppContext from '../lib/app-context';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import { GmapsSetUp } from './gmapsSetUp';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 
-export default class LandingPage extends React.Component {
+export default class SearchPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       events: null,
+      city: null,
+      radius: null,
       searchBar: 'none',
-      sport: '',
-      radius: '5',
-      latLng: null
+      searchRadius: '5',
+      sport: ''
     };
     this.searchButtonClick = this.searchButtonClick.bind(this);
     this.sportHandleChange = this.sportHandleChange.bind(this);
     this.radiusHandleChange = this.radiusHandleChange.bind(this);
     this.onSearch = this.onSearch.bind(this);
-  }
-
-  componentDidMount(props) {
-    const jwt = window.localStorage.getItem('react-context-jwt');
-    const req = {
-      method: 'GET',
-      headers: {
-        'x-access-token': jwt
-      }
-    };
-    const { userId } = this.context.user;
-    fetch(`/api/user/${userId}`, req)
-      .then(res => res.json())
-      .then(data => {
-        this.setState({ events: data });
-      });
   }
 
   searchButtonClick() {
@@ -57,7 +42,7 @@ export default class LandingPage extends React.Component {
 
   radiusHandleChange(event) {
     const selectedRadius = event.target.value;
-    this.setState({ radius: selectedRadius });
+    this.setState({ searchRadius: selectedRadius });
   }
 
   onSearch(event) {
@@ -67,31 +52,63 @@ export default class LandingPage extends React.Component {
     const lng = event.target.elements[2].value;
     const city = event.target.elements[3].value;
     const radius = event.target.elements[4].value;
-    const newHash = `#search?sport=${sport}&city=${city}&lat=${lat}&lng=${lng}&radius=${radius}`;
+    const newHash = `#research?sport=${sport}&city=${city}&lat=${lat}&lng=${lng}&radius=${radius}`;
     window.location.replace(newHash);
   }
 
+  componentDidMount() {
+    const { sport, lat, lng, radius } = this.props;
+    const latLng = { lat, lng };
+    const latLngLimit = latLngConversion(latLng, radius);
+    const payload = { sport, latLngLimit };
+    const jwt = window.localStorage.getItem('react-context-jwt');
+    const city = {
+      lat: parseFloat(latLng.lat),
+      lng: parseFloat(latLng.lng)
+    };
+    const req = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': jwt
+      },
+      body: JSON.stringify(payload)
+    };
+    fetch('/api/search/', req)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ events: data, city, radius });
+      });
+  }
+
   render() {
-    const { fullName } = this.context.user;
-    const searchBar = this.state.searchBar;
     if (!this.state.events) {
       return null;
     } else {
-      const events = this.state.events;
+      const { city, radius, events, searchBar } = this.state;
+      let markerLatLng;
+      if (events.length < 1) {
+        markerLatLng = [];
+      } else {
+        markerLatLng = this.state.events.map(({ lat, lng, ...rest }) => ({ lat: parseFloat(lat), lng: parseFloat(lng) }));
+      }
       return (
-        <Box maxWidth="md" padding='44px' margin='auto'>
-          <Typography variant='h5' marginBottom='30px'>
-            `Hello, { fullName }!`
+        <Box maxWidth='md' margin='auto' padding='30px'>
+          <Typography variant='h4' marginBottom='10px'>
+            Search Result:
           </Typography>
+          <Typography variant='h6'>
+            Current search parameters: {this.props.sport}, {this.props.city}, {radius} miles
+          </Typography>
+          <GmapsSetUp markers={markerLatLng} center={city} radius={radius}/>
+
+          {/* <Box sx={{ height: '600px', width: '100%', border: '1px solid black' }} /> */}
+
           <Box marginBottom='30px' display='flex' justifyContent='space-evenly'
-          sx={{ flexGrow: 1, display: 'flex' }}>
+            sx={{ flexGrow: 1, display: 'flex', mt: 2 }}>
             <Button variant='contained' color='error' size='medium' sx={{ flexGrow: 0.1 }}
-            onClick={this.searchButtonClick}>
-              SEARCH
-            </Button>
-            <Button variant='contained' size='medium' href='#createEvent'
-            color='error' sx={{ flexGrow: 0.1 }}>
-              CREATE
+              onClick={this.searchButtonClick}>
+              NEW SEARCH
             </Button>
           </Box>
           <Box sx={{ mb: 1 }} display={searchBar} bgcolor='rgba(150,150,150,0.3)' height='280px' padding='20px'>
@@ -112,13 +129,13 @@ export default class LandingPage extends React.Component {
                     <Grid item xs={8}>
                       <FormControl variant="standard" sx={{ minWidth: 120 }}>
                         <Select
-                        required
-                        labelId="Sport-select-label"
-                        id="select-standard"
-                        value={this.state.sport}
-                        onChange={this.sportHandleChange}
-                        defaultValue=""
-                      >
+                          required
+                          labelId="Sport-select-label"
+                          id="select-standard"
+                          value={this.state.sport}
+                          onChange={this.sportHandleChange}
+                          defaultValue=""
+                        >
                           <MenuItem value="">None</MenuItem>
                           <MenuItem value='Badminton'>Badminton</MenuItem>
                           <MenuItem value='Basketball'>Basketball</MenuItem>
@@ -153,13 +170,13 @@ export default class LandingPage extends React.Component {
                     <Grid item xs={8}>
                       <FormControl variant="standard" sx={{ minWidth: 120 }}>
                         <Select
-                        required
-                        labelId="Radius-select-label"
-                        id="select-standard"
-                        value={this.state.radius}
-                        onChange={this.radiusHandleChange}
-                        defaultValue="5"
-                      >
+                          required
+                          labelId="Radius-select-label"
+                          id="select-standard"
+                          value={this.state.searchRadius}
+                          onChange={this.radiusHandleChange}
+                          defaultValue="5"
+                        >
                           <MenuItem value='5'>5 miles</MenuItem>
                           <MenuItem value='10'>10 miles</MenuItem>
                           <MenuItem value='25'>25 miles</MenuItem>
@@ -178,42 +195,41 @@ export default class LandingPage extends React.Component {
             </form>
           </Box>
           <Box
-          backgroundColor='rgb(1, 112, 117)' height='4rem'
-          borderRadius='5px' display='flex' alignItems='center'
-          padding='10px' sx={{ flexGrow: 1 }}>
+            backgroundColor='rgb(1, 112, 117)' height='4rem'
+            borderRadius='5px' display='flex' alignItems='center'
+            padding='10px' sx={{ flexGrow: 1 }}>
             <EventAvailableIcon fontSize='large' sx={{ color: 'white', mr: 1 }} />
-            <Typography color='white'>Upcoming Events</Typography>
+            <Typography color='white'>{events.length} Events Found</Typography>
           </Box>
           {
-          events.map((event, index) => {
-            return (
-              <Accordion key={index}>
-                <AccordionSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-controls="panel1a-content"
-                  id="panel1a-header"
-                >
-                  <Typography>Event #{Number(index) + 1}</Typography>
-                  <Typography>{event.sport}</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <hr />
-                  <Typography>
-                    Page: <a href={`#events?eventId=${event.eventId}`}>Event Link Here</a> <br />
-                    Event: {event.eventName} <br />
-                    Date: {event.date} <br />
-                    Time: {event.time} <br />
-                    Location: {event.location} <br />
-                  </Typography>
-                </AccordionDetails>
-              </Accordion>
-            );
-          })
-        }
+            events.map((event, index) => {
+              return (
+                <Accordion key={index}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMoreIcon />}
+                    aria-controls="panel1a-content"
+                    id="panel1a-header"
+                  >
+                    <Typography>Event #{Number(index) + 1}</Typography>
+                    <Typography>{event.sport}</Typography>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <hr />
+                    <Typography>
+                      Host: {event.fullName} <br />
+                      Event: {event.eventName} <br />
+                      Date: {event.date} <br />
+                      Time: {event.time} <br />
+                      Location: {event.location} <br />
+                      Page: <a href={`#events?eventId=${event.eventId}`}>Event Link Here</a> <br />
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
+              );
+            })
+          }
         </Box>
       );
     }
   }
 }
-
-LandingPage.contextType = AppContext;

@@ -65,8 +65,8 @@ CREATE TABLE "public"."eventLocations" (
 CREATE TABLE "public"."locations" (
 	"locationId" serial NOT NULL,
 	"location" TEXT NOT NULL,
-  "lat" TEXT NOT NULL,
-  "lng" TEXT NOT NULL,
+  "lat" NUMERIC NOT NULL,
+  "lng" NUMERIC NOT NULL,
 	CONSTRAINT "locations_pk" PRIMARY KEY ("locationId")
 ) WITH (
   OIDS=FALSE

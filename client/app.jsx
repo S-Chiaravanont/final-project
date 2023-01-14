@@ -11,6 +11,7 @@ import EventPage from './pages/event';
 import jwtDecode from 'jwt-decode';
 import SearchPage from './pages/search';
 import ResearchPage from './pages/research';
+import EditEventPage from './pages/editEvent';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -77,6 +78,9 @@ export default class App extends React.Component {
       const lng = params.get('lng');
       const radius = params.get('radius');
       return <ResearchPage sport={sport} city={city} lat={lat} lng={lng} radius={radius} />;
+    } else if (path === 'edit') {
+      const eventId = params.get('eventId');
+      return <EditEventPage eventId={eventId} />;
     }
   }
 

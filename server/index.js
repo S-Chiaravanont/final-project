@@ -207,6 +207,39 @@ app.post('/api/search/', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.post('/api/event/edit/:eventId', (req, res, next) => {
+  const eventId = Number(req.params.eventId);
+  if (eventId < 1) {
+    throw new ClientError(400, 'id is not valid, must be greater than 0');
+  }
+  const { sport, date, time, eventName, note, participant, location, lat, lng } = req.body;
+  const sql = `
+    with step_one as (
+      update "events"
+        set "eventName" = $1,
+            "sport" = $2,
+            "date" = $3,
+            "time" = $4,
+            "note" = $5,
+            "participant" = $6
+      where "eventId" = $7
+    )
+      update "locations"
+        set "location" = $8,
+            "lat" = $9,
+            "lng" = $10
+        where "locationId" = $7
+  `;
+  const params = [eventName, sport, date, time, note, participant, eventId, location, parseFloat(lat), parseFloat(lng)];
+  db.query(sql, params)
+    .then(result => {
+      const resReturn = result.rows;
+      res.json({ resReturn });
+    })
+    .catch(err => next(err));
+
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {

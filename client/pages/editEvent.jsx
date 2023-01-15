@@ -67,7 +67,7 @@ export default class EditEventPage extends React.Component {
 
   onEditEvent(event) {
     event.preventDefault();
-    const eventId = this.state.userId;
+    const eventId = this.props.eventId;
     const host = this.context.user.userId;
     const eventName = event.target.elements[0].value;
     const sport = event.target.elements[1].value;

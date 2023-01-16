@@ -3,13 +3,19 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { GmapsSetUp } from '../components/gmapsSetUp';
+import AppContext from '../lib/app-context';
+import Link from '@mui/material/Link';
 
 export default class EventPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      event: null
+      event: null,
+      isOwner: false,
+      eventId: null
     };
+    this.isEventOwner = this.isEventOwner.bind(this);
+    this.eventEditOnClick = this.eventEditOnClick.bind(this);
   }
 
   componentDidMount() {
@@ -24,8 +30,26 @@ export default class EventPage extends React.Component {
     fetch(`/api/event/${eventId}`, req)
       .then(res => res.json())
       .then(data => {
-        this.setState({ event: data[0] });
+        if (data[0].userId === this.context.user.userId) {
+          this.setState({ event: data[0], isOwner: true, eventId });
+        } else {
+          this.setState({ event: data[0], eventId });
+        }
       });
+  }
+
+  eventEditOnClick() {
+    const newHash = `#edit?eventId=${this.state.eventId}`;
+    window.location.replace(newHash);
+    return null;
+  }
+
+  isEventOwner() {
+    if (this.state.isOwner) {
+      return (
+        <Link component='button' onClick={this.eventEditOnClick} >Edit</Link>
+      );
+    }
   }
 
   render() {
@@ -40,6 +64,11 @@ export default class EventPage extends React.Component {
               <Grid item xs={12}>
                 <Typography variant='h4' sx={{ mt: 1, mb: 2 }}>
                   Event #{this.props.eventId}
+                </Typography>
+              </Grid>
+              <Grid item xs={12}>
+                <Typography variant='h4' sx={{ textAlign: 'end' }}>
+                  {this.isEventOwner()}
                 </Typography>
               </Grid>
               <Grid item xs={4}>
@@ -121,3 +150,5 @@ export default class EventPage extends React.Component {
     }
   }
 }
+
+EventPage.contextType = AppContext;

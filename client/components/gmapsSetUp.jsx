@@ -24,6 +24,9 @@ export function GmapsSetUp(props) {
   } else if (props.markers) {
     const { markers, center, radius } = props;
     return <SearchPageMap markers={markers} center={center} radius={radius} />;
+  } else if (props.editMap) {
+    const { editMap } = props;
+    return <EditMap editMap={editMap} />;
   } else {
     const { location, lat, lng } = props;
     return <DisplayMap location={location} lat={lat} lng={lng} />;
@@ -115,7 +118,6 @@ const PlacesAutocomplete = ({ setSelected }) => {
         </ListItem>
       );
     });
-
   return (
     <div onSelect={handleSelect}>
       <TextField
@@ -276,4 +278,107 @@ function SearchPageMap(props) {
       </Grid>
     );
   }
+}
+
+function EditMap(props) {
+  const { lat, lng, location } = props.editMap;
+  const [selected, setSelected] = useState({ lat, lng });
+  const PlacesAutocompleteEdit = ({ setSelected }) => {
+    const {
+      ready,
+      value,
+      setValue,
+      suggestions: { status, data },
+      clearSuggestions
+    } = usePlacesAutocomplete({
+      requestOptions: {
+        componentRestrictions: { country: 'us' }
+      },
+      debounce: 300,
+      defaultValue: location
+    });
+
+    const handleSelect = ({ description }) =>
+      () => {
+        setValue(description, false);
+        clearSuggestions();
+
+        getGeocode({ address: description }).then(results => {
+          const { lat, lng } = getLatLng(results[0]);
+          setSelected({ lat, lng });
+        });
+      };
+
+    const handleInput = e => {
+      setValue(e.target.value);
+    };
+
+    const renderSuggestions = () =>
+      data.map(suggestion => {
+        const {
+          place_id,
+          structured_formatting: { main_text, secondary_text }
+        } = suggestion;
+
+        return (
+          <ListItem key={place_id} onClick={handleSelect(suggestion)}>
+            <ListItemButton>
+              <ListItemText>
+                <strong>{main_text}</strong> <small>{secondary_text}</small>
+              </ListItemText>
+            </ListItemButton>
+          </ListItem>
+        );
+      });
+    return (
+      <div onSelect={handleSelect}>
+        <TextField
+          required
+          variant="filled"
+          fullWidth
+          value={value}
+          disabled={!ready}
+          onChange={handleInput}
+          placeholder='Search address...'
+        />
+        {status === 'OK' &&
+          <List sx={{ position: 'absolute', zIndex: '5', bgcolor: 'white', border: '1px solid black' }}>{renderSuggestions()}</List>}
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <Grid item xs={4}>
+        <Typography sx={{ mt: 1 }}>
+          Location:
+        </Typography>
+      </Grid>
+      <Grid item xs={8}>
+        <PlacesAutocompleteEdit setSelected={setSelected} />
+        <TextField
+          id="filled-required"
+          variant="filled"
+          fullWidth
+          sx={{ display: 'none' }}
+          value={selected.lat}
+        />
+        <TextField
+          id="filled-required"
+          variant="filled"
+          fullWidth
+          sx={{ display: 'none' }}
+          value={selected.lng}
+        />
+      </Grid>
+      <Grid item xs={12}>
+        <GoogleMap
+          zoom={14}
+          center={selected}
+          mapContainerClassName="map-container">
+          {selected && <Marker position={selected} />}
+        </GoogleMap>
+      </Grid>
+    </>
+  );
 }

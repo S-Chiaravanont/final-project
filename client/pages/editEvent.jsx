@@ -15,6 +15,7 @@ import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import Modal from '@mui/material/Modal';
 import { GmapsSetUp } from '../components/gmapsSetUp';
 
 export default class EditEventPage extends React.Component {
@@ -28,13 +29,61 @@ export default class EditEventPage extends React.Component {
       location: null,
       lat: null,
       lng: null,
-      participant: null
+      participant: null,
+      open: false
     };
     this.onEditEvent = this.onEditEvent.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.sportHandleChange = this.sportHandleChange.bind(this);
     this.renderMap = this.renderMap.bind(this);
     this.cancelOnClick = this.cancelOnClick.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.handleOpen = this.handleOpen.bind(this);
+    this.handleDelete = this.handleDelete.bind(this);
+    this.style = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 400,
+      bgcolor: 'background.paper',
+      border: '2px solid #000',
+      borderRadius: '5px',
+      boxShadow: 24,
+      p: 4
+    };
+  }
+
+  handleClose() {
+    this.setState({ open: false });
+  }
+
+  handleOpen() {
+    this.setState({ open: true });
+  }
+
+  handleDelete() {
+    const eventId = this.props.eventId;
+    const jwt = window.localStorage.getItem('react-context-jwt');
+    const req = {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': jwt
+      }
+    };
+    fetch(`/api/event/delete/${eventId}`, req)
+      .then(res => res.json())
+      .then(data => {
+        const { error } = data;
+        if (error) {
+          // eslint-disable-next-line no-console
+          console.log(error);
+          return null;
+        }
+        window.location.replace('#home');
+        return null;
+      });
   }
 
   componentDidMount() {
@@ -69,15 +118,15 @@ export default class EditEventPage extends React.Component {
     event.preventDefault();
     const eventId = this.props.eventId;
     const host = this.context.user.userId;
-    const eventName = event.target.elements[0].value;
-    const sport = event.target.elements[1].value;
-    const participant = event.target.elements[2].value;
-    const date = event.target.elements[3].value;
-    const time = event.target.elements[6].value;
-    const note = event.target.elements[9].value;
-    const location = event.target.elements[11].value;
-    const lat = event.target.elements[12].value;
-    const lng = event.target.elements[13].value;
+    const eventName = event.target.elements.eventName.value;
+    const sport = event.target.elements.sport.value;
+    const participant = event.target.elements.participant.value;
+    const date = event.target.elements[4].value;
+    const time = event.target.elements[7].value;
+    const note = event.target.elements.note.value;
+    const location = event.target.elements.location.value;
+    const lat = event.target.elements.lat.value;
+    const lng = event.target.elements.lng.value;
     const payload = {
       host, eventName, sport, participant, date, time, note, location, lat, lng
     };
@@ -136,6 +185,25 @@ export default class EditEventPage extends React.Component {
                     Edit Event
                   </Typography>
                 </Grid>
+                <Grid item xs={12}>
+                  <Typography variant='h4' sx={{ textAlign: 'end' }}>
+                    <Button onClick={this.handleOpen}>Delete</Button>
+                  </Typography>
+                  <Modal
+                    open={this.state.open}
+                    onClose={this.handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                   >
+                    <Box sx={this.style}>
+                      <Typography textAlign='center' id="modal-modal-title" variant="h6" component="h2">
+                        Are you sure you would like to delete this event?
+                      </Typography>
+                      <Button onClick={this.handleDelete} sx={{ ml: 3, mr: 15 }} >Confirm</Button>
+                      <Button onClick={this.handleClose}>Cancel</Button>
+                    </Box>
+                  </Modal>
+                </Grid>
                 <Grid item xs={4}>
                   <Typography sx={{ mt: 2 }}>
                     Host:
@@ -154,7 +222,7 @@ export default class EditEventPage extends React.Component {
                 <Grid item xs={8}>
                   <TextField
                     required
-                    id="filled-required"
+                    name="eventName"
                     variant="filled"
                     fullWidth
                     placeholder='Name your event'
@@ -171,6 +239,7 @@ export default class EditEventPage extends React.Component {
                     <InputLabel id="select-sport-label">Sport</InputLabel>
                     <Select
                       required
+                      name='sport'
                       labelId="Sport-select-label"
                       id="select-standard"
                       value={this.state.sport}
@@ -207,6 +276,7 @@ export default class EditEventPage extends React.Component {
                     id="filled-required"
                     variant="filled"
                     type='number'
+                    name='participant'
                     inputProps={{ min: 1, max: 100, step: 1 }}
                     defaultValue={this.state.participant}
                   />
@@ -219,6 +289,7 @@ export default class EditEventPage extends React.Component {
                 <Grid item xs={8}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DesktopDatePicker
+                      name='date'
                       inputFormat="MM/DD/YYYY"
                       value={this.state.value}
                       onChange={this.handleChange}
@@ -234,6 +305,7 @@ export default class EditEventPage extends React.Component {
                 <Grid item xs={8}>
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <TimePicker
+                      name='time'
                       value={this.state.value}
                       onChange={this.handleChange}
                       renderInput={params => <TextField {...params} />}
@@ -248,7 +320,7 @@ export default class EditEventPage extends React.Component {
                 <Grid item xs={8}>
                   <TextField
                     required
-                    id="filled-required"
+                    name='note'
                     variant="filled"
                     placeholder='Additional notes...'
                     fullWidth

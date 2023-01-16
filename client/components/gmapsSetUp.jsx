@@ -336,6 +336,7 @@ function EditMap(props) {
           required
           variant="filled"
           fullWidth
+          name='location'
           value={value}
           disabled={!ready}
           onChange={handleInput}
@@ -357,14 +358,14 @@ function EditMap(props) {
       <Grid item xs={8}>
         <PlacesAutocompleteEdit setSelected={setSelected} />
         <TextField
-          id="filled-required"
+          name='lat'
           variant="filled"
           fullWidth
           sx={{ display: 'none' }}
           value={selected.lat}
         />
         <TextField
-          id="filled-required"
+          name='lng'
           variant="filled"
           fullWidth
           sx={{ display: 'none' }}

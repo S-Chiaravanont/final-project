@@ -4,7 +4,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { GmapsSetUp } from '../components/gmapsSetUp';
 import AppContext from '../lib/app-context';
-import Link from '@mui/material/Link';
+import Button from '@mui/material/Button';
 
 export default class EventPage extends React.Component {
   constructor(props) {
@@ -47,7 +47,7 @@ export default class EventPage extends React.Component {
   isEventOwner() {
     if (this.state.isOwner) {
       return (
-        <Link component='button' onClick={this.eventEditOnClick} >Edit</Link>
+        <Button onClick={this.eventEditOnClick} >Edit</Button>
       );
     }
   }

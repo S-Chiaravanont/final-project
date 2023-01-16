@@ -240,6 +240,29 @@ app.post('/api/event/edit/:eventId', (req, res, next) => {
 
 });
 
+app.delete('/api/event/delete/:eventId', (req, res, next) => {
+  const eventId = Number(req.params.eventId);
+  if (eventId < 1) {
+    throw new ClientError(400, 'id is not valid, must be greater than 0');
+  }
+  const sql = `
+    with step_one as (
+      delete from "events" where "eventId" = $1
+    ),
+    step_two as (
+      delete from "locations" where "locationId" = $1
+    )
+    delete from "eventLocations" where "locationId" = $1
+  `;
+  const params = [eventId];
+  db.query(sql, params)
+    .then(result => {
+      const resReturn = result.rows;
+      res.json({ resReturn });
+    })
+    .catch(err => next(err));
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {

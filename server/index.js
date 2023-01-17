@@ -286,9 +286,80 @@ app.get('/api/user/account/:userId', (req, res, next) => {
     .catch(err => next(err));
 });
 
-// const payload = { userId, fullName };
-// const token = jwt.sign(payload, process.env.TOKEN_SECRET);
-// res.json({ token, user: payload });
+app.put('/api/account/edit/:userId', (req, res, next) => {
+  const userId = parseInt(req.params.userId);
+  const { userName, preference, fullName, gender } = req.body;
+  const yearOfBirth = req.body.DOB;
+  if (!userName || !fullName) {
+    throw new ClientError(401, 'invalid login 1 here');
+  }
+  const sqlSelectUserName = `
+    select "userId"
+     from  "users"
+     where "userName" = $1
+  `;
+  const paramsSearch = [userName];
+  db.query(sqlSelectUserName, paramsSearch)
+    .then(result => {
+      const users = result.rows;
+      if (users.length > 0) {
+        if (users[0].userId !== userId) {
+          res.status(400).json({ error: 'username is invalid' });
+          return null;
+        }
+      }
+    })
+    .catch(err => next(err));
+  const sql = `
+      update "users"
+        set "userName" = $1,
+            "fullName" = $2,
+            "gender" = $3,
+            "yearOfBirth" = $4,
+            "preference" = $5
+      where "userId" = $6
+      returning "userName", "fullName", "gender", "yearOfBirth", "preference";
+  `;
+  const params = [userName, fullName, gender, yearOfBirth, preference, userId];
+  db.query(sql, params)
+    .then(result => {
+      const [user] = result.rows;
+      const payload = { userId, fullName };
+      const token = jwt.sign(payload, process.env.TOKEN_SECRET);
+      res.json({ token, user });
+    })
+    .catch(err => next(err));
+});
+
+app.put('/api/password/change/:userId', (req, res, next) => {
+  const { userId } = req.params;
+  const { password, newPassword } = req.body;
+  if (!newPassword || !password) {
+    throw new ClientError(401, 'invalid login');
+  }
+  const sql = `
+    select "hashedPassword"
+      from "users"
+    where  "userId" = $1
+  `;
+  const params = [userId];
+  db.query(sql, params)
+    .then(result => {
+      const [user] = result.rows;
+      if (!user) {
+        throw new ClientError(401, 'invalid login 2');
+      }
+      const { hashedPassword } = user;
+      return argon2
+        .verify(hashedPassword, password)
+        .then(isMatching => {
+          if (!isMatching) {
+            throw new ClientError(401, 'invalid password');
+          }
+        });
+    })
+    .catch(err => next(err));
+});
 
 app.use(errorMiddleware);
 

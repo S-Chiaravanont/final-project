@@ -17,19 +17,107 @@ import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import Modal from '@mui/material/Modal';
 
 export default class AccountPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       user: null,
-      edit: false
+      edit: false,
+      open: false,
+      value: null,
+      alert: false,
+      newPass: '',
+      rNewPass: ''
     };
     this.AlertOnClick = this.AlertOnClick.bind(this);
     this.UnsuccessAlerts = this.UnsuccessAlerts.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.accountEditOnClick = this.accountEditOnClick.bind(this);
     this.cancelOnClick = this.cancelOnClick.bind(this);
+    this.handleClose = this.handleClose.bind(this);
+    this.handleOpen = this.handleOpen.bind(this);
+    this.confirmPassword = this.confirmPassword.bind(this);
+    this.onSave = this.onSave.bind(this);
+    this.onChangeNP = this.onChangeNP.bind(this);
+    this.onChangeRNP = this.onChangeRNP.bind(this);
+    this.style = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: 400,
+      bgcolor: 'background.paper',
+      border: '2px solid #000',
+      borderRadius: '5px',
+      boxShadow: 24,
+      p: 4
+    };
+  }
+
+  onChangeNP(event) {
+    this.setState({ newPass: event.target.value });
+  }
+
+  onChangeRNP(event) {
+    this.setState({ rNewPass: event.target.value });
+  }
+
+  isMatch() {
+    const { newPass, rNewPass } = this.state;
+    if (newPass !== rNewPass) {
+      return (
+        <Typography color='red'>* Not Matching</Typography>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  onSave(event) {
+    event.preventDefault();
+    const fullName = event.target.elements.fullName.value;
+    const userName = event.target.elements.userName.value;
+    const gender = event.target.elements[3].checked ? event.target.elements[3].value : event.target.elements[4].value;
+    const DOB = event.target.elements[5].value;
+    const preference = event.target.elements.preference.value;
+    const payload = { fullName, userName, gender, DOB, preference };
+    const { userId } = this.context.user;
+    const jwt = window.localStorage.getItem('react-context-jwt');
+    const req = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': jwt
+      },
+      body: JSON.stringify(payload)
+    };
+    fetch(`/api/account/edit/${userId}`, req)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          this.setState({ alert: true });
+          return null;
+        }
+        const { user, token } = data;
+        window.localStorage.removeItem('react-context-jwt');
+        window.localStorage.setItem('react-context-jwt', token);
+        this.setState({ edit: false, user });
+      });
+    return null;
+  }
+
+  confirmPassword() {
+    return null;
+  }
+
+  handleClose() {
+    this.setState({ open: false });
+  }
+
+  handleOpen() {
+    this.setState({ open: true });
   }
 
   cancelOnClick() {
@@ -91,7 +179,8 @@ export default class AccountPage extends React.Component {
     fetch(`/api/user/account/${userId}`, req)
       .then(res => res.json())
       .then(data => {
-        this.setState({ user: data[0] });
+        const dob = data[0].yearOfBirth;
+        this.setState({ user: data[0], value: dob });
       });
   }
 
@@ -217,6 +306,7 @@ export default class AccountPage extends React.Component {
                     fullWidth
                     defaultValue={userName}
                   />
+                  {this.UnsuccessAlerts()}
                 </Grid>
                 <Grid item xs={4}>
                   <Typography sx={{ mt: 1 }}>
@@ -224,7 +314,56 @@ export default class AccountPage extends React.Component {
                   </Typography>
                 </Grid>
                 <Grid item xs={8}>
-                  <Button onClick={this.confirmPassword}>Change Password</Button>
+                  <Button onClick={this.handleOpen}>Change Password</Button>
+                  <Modal
+                    open={this.state.open}
+                    onClose={this.handleClose}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                  >
+                    <Box sx={this.style}>
+                      <Typography>
+                        Current Password:
+                      </Typography>
+                      <TextField
+                        required
+                        size='small'
+                        name='oldPassword'
+                        type='password'
+                        variant="filled"
+                        fullWidth
+                      />
+                      <Typography>
+                        New Password:
+                      </Typography>
+                      <TextField
+                        required
+                        size='small'
+                        name='newPassword'
+                        type='password'
+                        variant="filled"
+                        value={this.state.newPass}
+                        onChange={this.onChangeNP}
+                        fullWidth
+                      />
+                      <Typography>
+                        Confrim New Password: {this.isMatch()}
+                      </Typography>
+                      <TextField
+                        required
+                        size='small'
+                        name='repeatNewPassword'
+                        type='password'
+                        variant="filled"
+                        value={this.state.rNewPass}
+                        onChange={this.onChangeRNP}
+                        fullWidth
+                        sx={{ mb: 2 }}
+                      />
+                      <Button onClick={this.confirmPassword} sx={{ ml: 5, mr: 12 }} >Confirm</Button>
+                      <Button onClick={this.handleClose}>Cancel</Button>
+                    </Box>
+                  </Modal>
                 </Grid>
                 <Grid item xs={4}>
                   <Typography sx={{ mt: 1 }}>
@@ -262,7 +401,7 @@ export default class AccountPage extends React.Component {
                 </Grid>
                 <Grid item xs={4}>
                   <Typography sx={{ mt: 1 }}>
-                    Preference:
+                    Sport Preference:
                   </Typography>
                 </Grid>
                 <Grid item xs={8}>

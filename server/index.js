@@ -263,6 +263,33 @@ app.delete('/api/event/delete/:eventId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.get('/api/user/account/:userId', (req, res, next) => {
+  const id = Number(req.params.userId);
+  if (id < 1) {
+    throw new ClientError(400, 'id is not valid, must be greater than 0');
+  }
+  const sql = `
+    select "fullName",
+           "yearOfBirth",
+           "userName",
+           "gender",
+           "preference"
+      from "users"
+      where "userId" = $1
+  `;
+  const params = [id];
+  db.query(sql, params)
+    .then(result => {
+      const events = result.rows;
+      res.status(200).json(events);
+    })
+    .catch(err => next(err));
+});
+
+// const payload = { userId, fullName };
+// const token = jwt.sign(payload, process.env.TOKEN_SECRET);
+// res.json({ token, user: payload });
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {

@@ -263,6 +263,123 @@ app.delete('/api/event/delete/:eventId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.get('/api/user/account/:userId', (req, res, next) => {
+  const id = Number(req.params.userId);
+  if (id < 1) {
+    throw new ClientError(400, 'id is not valid, must be greater than 0');
+  }
+  const sql = `
+    select "fullName",
+           "yearOfBirth",
+           "userName",
+           "gender",
+           "preference"
+      from "users"
+      where "userId" = $1
+  `;
+  const params = [id];
+  db.query(sql, params)
+    .then(result => {
+      const events = result.rows;
+      res.status(200).json(events);
+    })
+    .catch(err => next(err));
+});
+
+app.put('/api/account/edit/:userId', (req, res, next) => {
+  const userId = parseInt(req.params.userId);
+  const { userName, preference, fullName, gender } = req.body;
+  const yearOfBirth = req.body.DOB;
+  if (!userName || !fullName) {
+    throw new ClientError(401, 'invalid login 1 here');
+  }
+  const sqlSelectUserName = `
+    select "userId"
+     from  "users"
+     where "userName" = $1
+  `;
+  const paramsSearch = [userName];
+  db.query(sqlSelectUserName, paramsSearch)
+    .then(result => {
+      const users = result.rows;
+      if (users.length > 0) {
+        if (users[0].userId !== userId) {
+          res.status(400).json({ error: 'username is invalid' });
+          return null;
+        }
+      }
+    })
+    .catch(err => next(err));
+  const sql = `
+      update "users"
+        set "userName" = $1,
+            "fullName" = $2,
+            "gender" = $3,
+            "yearOfBirth" = $4,
+            "preference" = $5
+      where "userId" = $6
+      returning "userName", "fullName", "gender", "yearOfBirth", "preference";
+  `;
+  const params = [userName, fullName, gender, yearOfBirth, preference, userId];
+  db.query(sql, params)
+    .then(result => {
+      const [user] = result.rows;
+      const payload = { userId, fullName };
+      const token = jwt.sign(payload, process.env.TOKEN_SECRET);
+      res.json({ token, user });
+    })
+    .catch(err => next(err));
+});
+
+app.put('/api/password/change/:userId', (req, res, next) => {
+  const { userId } = req.params;
+  const { oldPass, newPass } = req.body;
+  if (!newPass || !oldPass) {
+    throw new ClientError(401, 'invalid login');
+  }
+  const sql = `
+    select "hashedPassword"
+      from "users"
+    where  "userId" = $1
+  `;
+  const params = [userId];
+  db.query(sql, params)
+    .then(result => {
+      const [user] = result.rows;
+      if (!user) {
+        throw new ClientError(401, 'invalid login');
+      }
+      const { hashedPassword } = user;
+      return argon2
+        .verify(hashedPassword, oldPass)
+        .then(isMatching => {
+          if (!isMatching) {
+            throw new ClientError(401, 'invalid password');
+          }
+        })
+        .then(() => {
+          argon2
+            .hash(newPass)
+            .then(hashedPassword => {
+              const sqlUpdate = `
+        update "users"
+          set "hashedPassword" = $1
+        where "userId" = $2
+      `;
+              const paramsUpdate = [hashedPassword, userId];
+              return db.query(sqlUpdate, paramsUpdate);
+            })
+            .then(result => {
+              const user = result.rows;
+              res.json(user);
+            })
+            .catch(err => next(err));
+        });
+    })
+    .catch(err => next(err));
+
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {

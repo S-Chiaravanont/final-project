@@ -12,6 +12,7 @@ import jwtDecode from 'jwt-decode';
 import SearchPage from './pages/search';
 import ResearchPage from './pages/research';
 import EditEventPage from './pages/editEvent';
+import AccountPage from './pages/account';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -52,7 +53,7 @@ export default class App extends React.Component {
     if (path === 'home' || path === '') {
       return <Home />;
     } else if (path === 'account') {
-      return null;
+      return <AccountPage />;
     } else if (path === 'log-in') {
       return <LoginPage />;
     } else if (path === 'sign-up') {

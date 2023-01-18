@@ -333,8 +333,8 @@ app.put('/api/account/edit/:userId', (req, res, next) => {
 
 app.put('/api/password/change/:userId', (req, res, next) => {
   const { userId } = req.params;
-  const { password, newPassword } = req.body;
-  if (!newPassword || !password) {
+  const { oldPass, newPass } = req.body;
+  if (!newPass || !oldPass) {
     throw new ClientError(401, 'invalid login');
   }
   const sql = `
@@ -347,18 +347,37 @@ app.put('/api/password/change/:userId', (req, res, next) => {
     .then(result => {
       const [user] = result.rows;
       if (!user) {
-        throw new ClientError(401, 'invalid login 2');
+        throw new ClientError(401, 'invalid login');
       }
       const { hashedPassword } = user;
       return argon2
-        .verify(hashedPassword, password)
+        .verify(hashedPassword, oldPass)
         .then(isMatching => {
           if (!isMatching) {
             throw new ClientError(401, 'invalid password');
           }
+        })
+        .then(() => {
+          argon2
+            .hash(newPass)
+            .then(hashedPassword => {
+              const sqlUpdate = `
+        update "users"
+          set "hashedPassword" = $1
+        where "userId" = $2
+      `;
+              const paramsUpdate = [hashedPassword, userId];
+              return db.query(sqlUpdate, paramsUpdate);
+            })
+            .then(result => {
+              const user = result.rows;
+              res.json(user);
+            })
+            .catch(err => next(err));
         });
     })
     .catch(err => next(err));
+
 });
 
 app.use(errorMiddleware);

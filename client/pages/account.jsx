@@ -28,8 +28,11 @@ export default class AccountPage extends React.Component {
       open: false,
       value: null,
       alert: false,
+      alertPassword: false,
       newPass: '',
-      rNewPass: ''
+      rNewPass: '',
+      oldPass: '',
+      changePasswordSuccess: false
     };
     this.AlertOnClick = this.AlertOnClick.bind(this);
     this.UnsuccessAlerts = this.UnsuccessAlerts.bind(this);
@@ -42,6 +45,9 @@ export default class AccountPage extends React.Component {
     this.onSave = this.onSave.bind(this);
     this.onChangeNP = this.onChangeNP.bind(this);
     this.onChangeRNP = this.onChangeRNP.bind(this);
+    this.onChangeOP = this.onChangeOP.bind(this);
+    this.passwordCheck = this.passwordCheck.bind(this);
+    this.changePasswordSuccessHandle = this.changePasswordSuccessHandle.bind(this);
     this.style = {
       position: 'absolute',
       top: '50%',
@@ -56,12 +62,55 @@ export default class AccountPage extends React.Component {
     };
   }
 
+  passwordCheck() {
+    if (this.state.alertPassword) {
+      return (
+        <Typography color='red'>Incorrect Password</Typography>
+      );
+    } else {
+      return null;
+    }
+  }
+
+  changePasswordSuccessHandle() {
+    if (this.state.changePasswordSuccess) {
+      return (
+        <Box
+          sx={{ width: '100%' }}>
+          <Collapse in={true}>
+            <Alert
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    this.setState({ changePasswordSuccess: false });
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+            >
+              Password Changed successfully!
+            </Alert>
+          </Collapse>
+        </Box>
+      );
+    }
+  }
+
   onChangeNP(event) {
     this.setState({ newPass: event.target.value });
   }
 
   onChangeRNP(event) {
     this.setState({ rNewPass: event.target.value });
+  }
+
+  onChangeOP(event) {
+    this.setState({ oldPass: event.target.value });
   }
 
   isMatch() {
@@ -109,11 +158,36 @@ export default class AccountPage extends React.Component {
   }
 
   confirmPassword() {
-    return null;
+    const { newPass, rNewPass, oldPass } = this.state;
+    if (newPass !== rNewPass) {
+      return null;
+    }
+    const { userId } = this.context.user;
+    const payload = { newPass, oldPass };
+    const jwt = window.localStorage.getItem('react-context-jwt');
+    const req = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': jwt
+      },
+      body: JSON.stringify(payload)
+    };
+    fetch(`/api/password/change/${userId}`, req)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          this.setState({ alertPassword: true });
+          return null;
+        }
+        this.handleClose();
+        this.setState({ changePasswordSuccess: true });
+        return null;
+      });
   }
 
   handleClose() {
-    this.setState({ open: false });
+    this.setState({ open: false, newPass: '', oldPass: '', rNewPass: '', alertPassword: false });
   }
 
   handleOpen() {
@@ -315,6 +389,7 @@ export default class AccountPage extends React.Component {
                 </Grid>
                 <Grid item xs={8}>
                   <Button onClick={this.handleOpen}>Change Password</Button>
+                  {this.changePasswordSuccessHandle()}
                   <Modal
                     open={this.state.open}
                     onClose={this.handleClose}
@@ -325,12 +400,15 @@ export default class AccountPage extends React.Component {
                       <Typography>
                         Current Password:
                       </Typography>
+                      {this.passwordCheck()}
                       <TextField
                         required
                         size='small'
                         name='oldPassword'
                         type='password'
                         variant="filled"
+                        value={this.state.oldPass}
+                        onChange={this.onChangeOP}
                         fullWidth
                       />
                       <Typography>
@@ -347,8 +425,9 @@ export default class AccountPage extends React.Component {
                         fullWidth
                       />
                       <Typography>
-                        Confrim New Password: {this.isMatch()}
+                        Confirm New Password:
                       </Typography>
+                      {this.isMatch()}
                       <TextField
                         required
                         size='small'

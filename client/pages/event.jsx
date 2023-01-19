@@ -12,10 +12,14 @@ export default class EventPage extends React.Component {
     this.state = {
       event: null,
       isOwner: false,
-      eventId: null
+      eventId: null,
+      participantId: null,
+      joinStatus: false
     };
     this.isEventOwner = this.isEventOwner.bind(this);
     this.eventEditOnClick = this.eventEditOnClick.bind(this);
+    this.joinEventOnClick = this.joinEventOnClick.bind(this);
+    this.unJoinEventOnClick = this.unJoinEventOnClick.bind(this);
   }
 
   componentDidMount() {
@@ -35,6 +39,13 @@ export default class EventPage extends React.Component {
         } else {
           this.setState({ event: data[0], eventId });
         }
+      })
+      .then(() => {
+        fetch(`/api/eventStatus/${eventId}`, req)
+          .then(res => res.json())
+          .then(data => {
+            this.setState({ participantId: data });
+          });
       });
   }
 
@@ -44,11 +55,58 @@ export default class EventPage extends React.Component {
     return null;
   }
 
+  joinEventOnClick() {
+    const { userId } = this.context.user;
+    const { eventId } = this.state.eventId;
+    const jwt = window.localStorage.getItem('react-context-jwt');
+    const req = {
+      method: 'POST',
+      headers: {
+        'x-access-token': jwt
+      }
+    };
+    fetch(`/api/event/${eventId}/join/${userId}`, req)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ joinStatus: true });
+        return null;
+      });
+  }
+
+  unJoinEventOnClick() {
+    const { userId } = this.context.user;
+    const { eventId } = this.state.eventId;
+    const jwt = window.localStorage.getItem('react-context-jwt');
+    const req = {
+      method: 'POST',
+      headers: {
+        'x-access-token': jwt
+      }
+    };
+    fetch(`/api/event/${eventId}/unjoin/${userId}`, req)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ joinStatus: false });
+        return null;
+      });
+  }
+
   isEventOwner() {
+    const { userId } = this.context.user;
     if (this.state.isOwner) {
       return (
         <Button onClick={this.eventEditOnClick} >Edit</Button>
       );
+    } else {
+      if (!this.state.isNotAParticipant.includes(userId)) {
+        return (
+          <Button onClick={this.joinEventOnClick} >Join</Button>
+        );
+      } else {
+        return (
+          <Button onClick={this.unJoinEventOnClick} >Unjoin</Button>
+        );
+      }
     }
   }
 

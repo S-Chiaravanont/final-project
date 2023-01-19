@@ -380,6 +380,26 @@ app.put('/api/password/change/:userId', (req, res, next) => {
 
 });
 
+app.get('/api/eventStatus/:eventId', (req, res, next) => {
+  const eventId = Number(req.params.eventId);
+  const sql = `
+      select "userId",
+           "responseStatus"
+      from "eventStatus"
+      where "eventId" = $1
+  `;
+  const params = [eventId];
+  db.query(sql, params)
+    .then(result => {
+      const events = result.rows;
+      res.status(200).json(events);
+    })
+    .catch(err => next(err));
+});
+
+// insert into "eventStatus"("userId", "eventId", "responseStatus")
+// values((select "userId" from "users" where "userId" = 2), (select "eventId" from "events" where "eventId" = 4), true)
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {

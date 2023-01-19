@@ -397,8 +397,39 @@ app.get('/api/eventStatus/:eventId', (req, res, next) => {
     .catch(err => next(err));
 });
 
-// insert into "eventStatus"("userId", "eventId", "responseStatus")
-// values((select "userId" from "users" where "userId" = 2), (select "eventId" from "events" where "eventId" = 4), true)
+app.post('/api/event/:eventId/join/:userId', (req, res, next) => {
+  const { eventId, userId } = req.params;
+  const sql = `
+  insert into "eventStatus"("userId", "eventId", "responseStatus")
+      values((select "userId" from "users" where "userId" = $1), (select "eventId" from "events" where "eventId" = $2), true)
+  returning "responseStatus";
+  `;
+  const params = [parseInt(userId), parseInt(eventId)];
+  db.query(sql, params)
+    .then(result => {
+      const [responseStatus] = result.rows;
+      res.status(200).json(responseStatus);
+    })
+    .catch(err => next(err));
+});
+
+app.put('/api/event/:eventId/join/:userId', (req, res, next) => {
+  const { eventId, userId } = req.params;
+  const { responseStatus } = req.body;
+  const sql = `
+  Update "eventStatus"
+    set "responseStatus" = $1
+    where "userId" = $2 and "eventId" = $3
+    returning "responseStatus";
+  `;
+  const params = [responseStatus, parseInt(userId), parseInt(eventId)];
+  db.query(sql, params)
+    .then(result => {
+      const [responseStatus] = result.rows;
+      res.status(200).json(responseStatus);
+    })
+    .catch(err => next(err));
+});
 
 app.use(errorMiddleware);
 

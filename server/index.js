@@ -88,19 +88,25 @@ app.get('/api/user/:userId', (req, res, next) => {
     throw new ClientError(400, 'id is not valid, must be greater than 0');
   }
   const sql = `
-    select "sport",
-           "date",
-           "time",
-           "eventName",
-           "location",
-           "eventId"
-      from "events"
-      join "users" using ("userId")
-      join "eventLocations" using ("eventId")
-      join "locations" using ("locationId")
-      where "userId" = $1
+      with step_one as (
+        select "eventId"
+          from "eventStatus"
+          where "userId" = $1 and "responseStatus" = $2
+        )
+        select "sport",
+                "date",
+                "time",
+                "eventName",
+                "location",
+                "fullName",
+                "eventId"
+          from "events"
+          join "users" using ("userId")
+          join "eventLocations" using ("eventId")
+          join "locations" using ("locationId")
+          where "eventId" = ANY (select "eventId" from step_one)
   `;
-  const params = [id];
+  const params = [id, true];
   db.query(sql, params)
     .then(result => {
       const events = result.rows;
@@ -125,12 +131,16 @@ app.post('/api/createEvent/:userId', (req, res, next) => {
       insert into "locations"("location", "lat", "lng")
       values ($8, $9, $10)
       returning "locationId"
+    ),
+    step_three as (
+      insert into "eventStatus" ("eventId", "userId", "responseStatus")
+      values ((select "eventId" from step_one), $1, $11)
     )
     insert into "eventLocations"("eventId", "locationId")
       select "eventId", "locationId" from step_one, step_two
       returning "eventId"
   `;
-  const params = [id, eventName, sport, date, time, note, participant, location, parseFloat(lat), parseFloat(lng)];
+  const params = [id, eventName, sport, date, time, note, participant, location, parseFloat(lat), parseFloat(lng), true];
   db.query(sql, params)
     .then(result => {
       const eventId = result.rows;
@@ -251,8 +261,11 @@ app.delete('/api/event/delete/:eventId', (req, res, next) => {
     ),
     step_two as (
       delete from "locations" where "locationId" = $1
-    )
+    ),
+    step_three as (
     delete from "eventLocations" where "locationId" = $1
+    )
+    delete from "eventStatus" where "eventId" = $1
   `;
   const params = [eventId];
   db.query(sql, params)
@@ -378,6 +391,57 @@ app.put('/api/password/change/:userId', (req, res, next) => {
     })
     .catch(err => next(err));
 
+});
+
+app.get('/api/eventStatus/:eventId', (req, res, next) => {
+  const eventId = Number(req.params.eventId);
+  const sql = `
+      select "userId",
+           "responseStatus"
+      from "eventStatus"
+      where "eventId" = $1
+  `;
+  const params = [eventId];
+  db.query(sql, params)
+    .then(result => {
+      const events = result.rows;
+      res.status(200).json(events);
+    })
+    .catch(err => next(err));
+});
+
+app.post('/api/event/:eventId/join/:userId', (req, res, next) => {
+  const { eventId, userId } = req.params;
+  const sql = `
+  insert into "eventStatus"("userId", "eventId", "responseStatus")
+      values((select "userId" from "users" where "userId" = $1), (select "eventId" from "events" where "eventId" = $2), true)
+  returning "responseStatus";
+  `;
+  const params = [parseInt(userId), parseInt(eventId)];
+  db.query(sql, params)
+    .then(result => {
+      const [responseStatus] = result.rows;
+      res.status(200).json(responseStatus);
+    })
+    .catch(err => next(err));
+});
+
+app.put('/api/event/:eventId/join/:userId', (req, res, next) => {
+  const { eventId, userId } = req.params;
+  const { responseStatus } = req.body;
+  const sql = `
+  Update "eventStatus"
+    set "responseStatus" = $1
+    where "userId" = $2 and "eventId" = $3
+    returning "responseStatus";
+  `;
+  const params = [responseStatus, parseInt(userId), parseInt(eventId)];
+  db.query(sql, params)
+    .then(result => {
+      const [responseStatus] = result.rows;
+      res.status(200).json(responseStatus);
+    })
+    .catch(err => next(err));
 });
 
 app.use(errorMiddleware);

@@ -12,13 +12,18 @@ export default class EventPage extends React.Component {
     this.state = {
       event: null,
       isOwner: false,
-      eventId: null
+      eventId: null,
+      participantId: null,
+      joinStatus: false,
+      newParticipant: false
     };
     this.isEventOwner = this.isEventOwner.bind(this);
     this.eventEditOnClick = this.eventEditOnClick.bind(this);
+    this.eventStatusUpdate = this.eventStatusUpdate.bind(this);
   }
 
   componentDidMount() {
+    const { userId } = this.context.user;
     const jwt = window.localStorage.getItem('react-context-jwt');
     const req = {
       method: 'GET',
@@ -35,6 +40,24 @@ export default class EventPage extends React.Component {
         } else {
           this.setState({ event: data[0], eventId });
         }
+      })
+      .then(() => {
+        fetch(`/api/eventStatus/${eventId}`, req)
+          .then(res => res.json())
+          .then(data => {
+            if (data.length < 1) {
+              return null;
+            } else {
+              const id = data.map(user => user.userId);
+              const statusKeyPairArray = data.map(({ userId, responseStatus }) => ({ [userId]: responseStatus }));
+              const statusKeyPair = statusKeyPairArray.reduce((acc, cur) => Object.assign(acc, cur), {});
+              if (!id.includes(userId)) {
+                this.setState({ participantId: data, joinStatus: false, newParticipant: true });
+              } else {
+                this.setState({ participantId: data, joinStatus: statusKeyPair[userId] });
+              }
+            }
+          });
       });
   }
 
@@ -44,11 +67,53 @@ export default class EventPage extends React.Component {
     return null;
   }
 
+  eventStatusUpdate() {
+    const { userId } = this.context.user;
+    const { eventId } = this.state;
+    const reqMethod = this.state.newParticipant === true ? 'POST' : 'PUT';
+    const payload = { responseStatus: !this.state.joinStatus };
+    const jwt = window.localStorage.getItem('react-context-jwt');
+    const req = {
+      method: reqMethod,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': jwt
+      },
+      body: JSON.stringify(payload)
+    };
+    fetch(`/api/event/${eventId}/join/${userId}`, req)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ joinStatus: data.responseStatus });
+        return null;
+      });
+  }
+
   isEventOwner() {
+    if (!this.state.participantId) {
+      return null;
+    }
     if (this.state.isOwner) {
       return (
         <Button onClick={this.eventEditOnClick} >Edit</Button>
       );
+    } else {
+      if (this.state.newParticipant) {
+        return (
+          <Button onClick={this.eventStatusUpdate} >Join</Button>
+        );
+      } else {
+        if (this.state.joinStatus) {
+          return (
+            <Button onClick={this.eventStatusUpdate} >Unjoin</Button>
+          );
+        } else {
+          return (
+            <Button onClick={this.eventStatusUpdate} >Join</Button>
+          );
+        }
+
+      }
     }
   }
 

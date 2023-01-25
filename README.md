@@ -60,9 +60,8 @@ Requirements for developers that would like to run the code on their personal co
 
 How to get started:
 - Installing all dependencies using `npm`
-- Create `.env` file with terminal command line `cp .env.example .env
-`
-- Change ALL `changeMe` value within `.env` file to anything. `TOKEN_SECRETE` and `DATABASE_URL`
+- Create `.env` file with terminal command line `cp .env.example .env`
+- Change ALL `changeMe` value within `.env` file to anything. `TOKEN_SECRET` and `DATABASE_URL`
 - Create a new variable name `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` set it to your Google Maps API key
 - Follow (https://mapsplatform.google.com/?utm_source=search&utm_medium=googleads&utm_campaign=brand_core_exa_desk_mobile_us&gclid=Cj0KCQiAw8OeBhCeARIsAGxWtUwm9D4ehXWQPU98KKgKqqwPVOmIGCD495Ud41C6U1D_xqG2A0N9l-oaAt-GEALw_wcB&gclsrc=aw.ds) to get started with Google APIs
 - Make sure your `postgresql` is running by checking the status `sudo service postgresql status`

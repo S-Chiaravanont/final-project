@@ -32,23 +32,23 @@ export default class LoginPage extends React.Component {
     if (this.state.alert) {
       return (
         <Box
-        sx={{ width: '350px', mt: 8 }}>
+          sx={{ width: '350px', mt: 8 }}>
           <Collapse in={this.state.alert}>
             <Alert
-            severity='error'
-            variant="filled"
-            action={
-              <IconButton
-                aria-label="close"
-                color="inherit"
-                size="small"
-                onClick={this.AlertOnClick}
-              >
-                <CloseIcon fontSize="inherit" />
-              </IconButton>
-            }
-            sx={{ mb: 2 }}
-          >
+              severity='error'
+              variant="filled"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={this.AlertOnClick}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+            >
               <AlertTitle>Error</AlertTitle>
               Invalid log in!
             </Alert>
@@ -89,8 +89,8 @@ export default class LoginPage extends React.Component {
   render() {
     if (this.context.user) return <Redirect to="home" />;
     return (
-      <Box width='400px' height='400px'
-        sx={{ boxShadow: 4, ml: 'auto', mr: 'auto', p: 3, mt: '5%' }}>
+      <Box height='400px'
+        sx={{ boxShadow: 4, ml: 'auto', mr: 'auto', p: 3, mt: '5%', width: { sx: '90%', sm: '400px' } }}>
         <Typography variant='h4' sx={{ mt: 1, mb: 2 }}>
           Sign in
         </Typography>

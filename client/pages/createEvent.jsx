@@ -145,7 +145,7 @@ export default class CreateEventPage extends React.Component {
                       <MenuItem value='Football'>Football</MenuItem>
                       <MenuItem value='Golf'>Golf</MenuItem>
                       <MenuItem value='Ice skating'>Ice skating</MenuItem>
-                      <MenuItem value='Laser tage'>Laser Tag</MenuItem>
+                      <MenuItem value='Laser tag'>Laser Tag</MenuItem>
                       <MenuItem value='Ping pong'>Ping pong</MenuItem>
                       <MenuItem value='Soccer'>Soccer</MenuItem>
                       <MenuItem value='Swimming'>Swimming</MenuItem>

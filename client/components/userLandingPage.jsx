@@ -81,7 +81,7 @@ export default class LandingPage extends React.Component {
       return (
         <Box maxWidth="md" padding='44px' margin='auto'>
           <Typography variant='h5' marginBottom='30px'>
-            `Hello, { fullName }!`
+            Hello, { fullName }!
           </Typography>
           <Box marginBottom='30px' display='flex' justifyContent='space-evenly'
           sx={{ flexGrow: 1, display: 'flex' }}>
@@ -128,7 +128,7 @@ export default class LandingPage extends React.Component {
                           <MenuItem value='Football'>Football</MenuItem>
                           <MenuItem value='Golf'>Golf</MenuItem>
                           <MenuItem value='Ice skating'>Ice skating</MenuItem>
-                          <MenuItem value='Laser tage'>Laser Tag</MenuItem>
+                          <MenuItem value='Laser tag'>Laser Tag</MenuItem>
                           <MenuItem value='Ping pong'>Ping pong</MenuItem>
                           <MenuItem value='Soccer'>Soccer</MenuItem>
                           <MenuItem value='Swimming'>Swimming</MenuItem>

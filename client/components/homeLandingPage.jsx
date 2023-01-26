@@ -15,8 +15,8 @@ export default function HomeLandingPage() {
         sx={{ m: 3 }}>
           Looking for <br /> pick-up sports <br /> in your area?
         </Typography>
-        <Box width='500px' height='300px' textalign='center'
-        sx={{ ml: 'auto', mr: 'auto', mb: 3 }}>
+        <Box height='300px' textalign='center'
+        sx={{ ml: 'auto', mr: 'auto', mb: 3, width: { xs: '90%', md: '500px' } }}>
           <Card>
             <CardMedia
             sx={{ height: 300 }}

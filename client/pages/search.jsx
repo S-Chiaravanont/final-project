@@ -102,8 +102,6 @@ export default class SearchPage extends React.Component {
           </Typography>
           <GmapsSetUp markers={markerLatLng} center={city} radius={radius}/>
 
-          {/* <Box sx={{ height: '600px', width: '100%', border: '1px solid black' }} /> */}
-
           <Box marginBottom='30px' display='flex' justifyContent='space-evenly'
             sx={{ flexGrow: 1, display: 'flex', mt: 2 }}>
             <Button variant='contained' color='error' size='medium' sx={{ flexGrow: 0.1 }}

@@ -33,15 +33,15 @@ export default class CreateEventPage extends React.Component {
   onCreateEvent(event) {
     event.preventDefault();
     const host = this.context.user.userId;
-    const eventName = event.target.elements[0].value;
+    const eventName = event.target.elements.eventName.value;
     const sport = event.target.elements[1].value;
-    const participant = event.target.elements[2].value;
+    const participant = event.target.elements.participants.value;
     const date = event.target.elements[3].value;
     const time = event.target.elements[6].value;
-    const note = event.target.elements[9].value;
-    const location = event.target.elements[11].value;
-    const lat = event.target.elements[12].value;
-    const lng = event.target.elements[13].value;
+    const note = event.target.elements.note.value;
+    const location = event.target.elements.location.value;
+    const lat = event.target.elements.lat.value;
+    const lng = event.target.elements.lng.value;
     const payload = {
       host, eventName, sport, participant, date, time, note, location, lat, lng
     };
@@ -113,6 +113,7 @@ export default class CreateEventPage extends React.Component {
                 <Grid item xs={8}>
                   <TextField
                  required
+                 name='eventName'
                  id="filled-required"
                  variant="filled"
                  fullWidth
@@ -162,6 +163,7 @@ export default class CreateEventPage extends React.Component {
                 <Grid item xs={8}>
                   <TextField
                     required
+                    name='participants'
                     id="filled-required"
                     variant="filled"
                     type='number'
@@ -206,6 +208,7 @@ export default class CreateEventPage extends React.Component {
                 <Grid item xs={8}>
                   <TextField
                     required
+                    name='note'
                     id="filled-required"
                     variant="filled"
                     placeholder='Additional notes...'

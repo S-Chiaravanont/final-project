@@ -46,6 +46,7 @@ function Map() {
       <Grid item xs={8}>
         <PlacesAutocomplete setSelected={setSelected} />
         <TextField
+                 name="lat"
                  id="filled-required"
                  variant="filled"
                  fullWidth
@@ -53,6 +54,7 @@ function Map() {
                  value={selected.lat}
                  />
         <TextField
+                 name='lng'
                  id="filled-required"
                  variant="filled"
                  fullWidth
@@ -122,6 +124,7 @@ const PlacesAutocomplete = ({ setSelected }) => {
     <div onSelect={handleSelect}>
       <TextField
         required
+        name='location'
         variant="filled"
         fullWidth
         value={value}

@@ -185,7 +185,34 @@ app.get('/api/event/:eventId', (req, res, next) => {
 app.post('/api/search/', (req, res, next) => {
   const { sport, latLngLimit } = req.body;
   const { upperLimit, lowerLimit, leftLimit, rightLimit } = latLngLimit;
-  const sql = `
+  let sql;
+  let params;
+  if (sport === 'All') {
+    sql = `
+    select "sport",
+           "note",
+           "participant",
+           "date",
+           "time",
+           "eventName",
+           "location",
+           "userId",
+           "lat",
+           "lng",
+           "fullName",
+           "eventId"
+      from "events"
+      join "users" using ("userId")
+      join "eventLocations" using ("eventId")
+      join "locations" using ("locationId")
+      where lat < $1
+      and lat > $2
+      and lng > $3
+      and lng < $4
+  `;
+    params = [upperLimit, lowerLimit, leftLimit, rightLimit];
+  } else {
+    sql = `
     select "sport",
            "note",
            "participant",
@@ -208,7 +235,9 @@ app.post('/api/search/', (req, res, next) => {
       and lng > $4
       and lng < $5
   `;
-  const params = [sport, upperLimit, lowerLimit, leftLimit, rightLimit];
+    params = [sport, upperLimit, lowerLimit, leftLimit, rightLimit];
+  }
+
   db.query(sql, params)
     .then(result => {
       const events = result.rows;

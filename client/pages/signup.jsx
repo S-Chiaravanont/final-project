@@ -129,6 +129,7 @@ export default class SignUpPage extends React.Component {
             <Box>
               <TextField
               required
+              type='password'
               id="filled-password-input"
               variant="filled"
               fullWidth

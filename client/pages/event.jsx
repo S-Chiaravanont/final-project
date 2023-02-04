@@ -84,7 +84,7 @@ export default class EventPage extends React.Component {
     fetch(`/api/event/${eventId}/join/${userId}`, req)
       .then(res => res.json())
       .then(data => {
-        this.setState({ joinStatus: data.responseStatus });
+        this.setState({ joinStatus: data.responseStatus, newParticipant: false });
         return null;
       });
   }

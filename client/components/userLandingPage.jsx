@@ -120,6 +120,7 @@ export default class LandingPage extends React.Component {
                         defaultValue=""
                       >
                           <MenuItem value="">None</MenuItem>
+                          <MenuItem value="All">All</MenuItem>
                           <MenuItem value='Badminton'>Badminton</MenuItem>
                           <MenuItem value='Basketball'>Basketball</MenuItem>
                           <MenuItem value='Bowling'>Bowling</MenuItem>

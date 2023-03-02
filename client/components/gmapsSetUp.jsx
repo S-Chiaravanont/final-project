@@ -149,7 +149,7 @@ function DisplayMap(props) {
           Location:
         </Typography>
       </Grid>
-      <Grid item xs={8} bgcolor='rgb(255,250,255)' borderRadius='2px' borderBottom='1px solid black'>
+      <Grid item xs={8} bgcolor='rgb(240,240,240)' borderRadius='2px' borderBottom='1px solid black'>
         <Typography sx={{ mt: 1 }}>
           {props.location}
         </Typography>

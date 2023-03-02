@@ -128,7 +128,7 @@ export default class EventPage extends React.Component {
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Typography variant='h4' sx={{ mt: 1, mb: 2 }}>
-                  Event #{this.props.eventId}
+                  {eventName}
                 </Typography>
               </Grid>
               <Grid item xs={12}>
@@ -148,20 +148,10 @@ export default class EventPage extends React.Component {
               </Grid>
               <Grid item xs={4}>
                 <Typography sx={{ mt: 1 }}>
-                  Event Name:
-                </Typography>
-              </Grid>
-              <Grid item xs={8} bgcolor='rgb(255,250,255)' borderRadius='2px' borderBottom='1px solid black'>
-                <Typography sx={{ mt: 1 }}>
-                  {eventName}
-                </Typography>
-              </Grid>
-              <Grid item xs={4}>
-                <Typography sx={{ mt: 1 }}>
                   Sport:
                 </Typography>
               </Grid>
-              <Grid item xs={8} bgcolor='rgb(240,240,240)' borderRadius='2px' borderBottom='1px solid black'>
+              <Grid item xs={8} bgcolor='rgb(255,250,255)' borderRadius='2px' borderBottom='1px solid black'>
                 <Typography sx={{ mt: 1 }}>
                   {sport}
                 </Typography>
@@ -171,7 +161,7 @@ export default class EventPage extends React.Component {
                   Participants (Maximum):
                 </Typography>
               </Grid>
-              <Grid item xs={8} bgcolor='rgb(255,250,255)' borderRadius='2px' borderBottom='1px solid black'>
+              <Grid item xs={8} bgcolor='rgb(240,240,240)' borderRadius='2px' borderBottom='1px solid black'>
                 <Typography sx={{ mt: 1 }}>
                   {participant}
                 </Typography>
@@ -181,7 +171,7 @@ export default class EventPage extends React.Component {
                   Date:
                 </Typography>
               </Grid>
-              <Grid item xs={8} bgcolor='rgb(240,240,240)' borderRadius='2px' borderBottom='1px solid black'>
+              <Grid item xs={8} bgcolor='rgb(255,250,255)' borderRadius='2px' borderBottom='1px solid black'>
                 <Typography sx={{ mt: 1 }}>
                   {date}
                 </Typography>
@@ -191,7 +181,7 @@ export default class EventPage extends React.Component {
                   Time:
                 </Typography>
               </Grid>
-              <Grid item xs={8} bgcolor='rgb(255,250,255)' borderRadius='2px' borderBottom='1px solid black'>
+              <Grid item xs={8} bgcolor='rgb(240,240,240)' borderRadius='2px' borderBottom='1px solid black'>
                 <Typography sx={{ mt: 1 }}>
                   {time}
                 </Typography>
@@ -201,13 +191,18 @@ export default class EventPage extends React.Component {
                   Notes:
                 </Typography>
               </Grid>
-              <Grid item xs={8} bgcolor='rgb(240,240,240)' borderRadius='2px' borderBottom='1px solid black'>
+              <Grid item xs={8} bgcolor='rgb(255,250,255)' borderRadius='2px' borderBottom='1px solid black'>
                 <Typography sx={{ mt: 1 }}>
                   {note}
                 </Typography>
               </Grid>
               <GmapsSetUp location={location} lat={lat} lng={lng} />
               <hr />
+              <Grid item xs={12}>
+                <Typography variant='h4' sx={{ textAlign: 'end' }}>
+                  Comments:
+                </Typography>
+              </Grid>
             </Grid>
           </Box>
         </Box>

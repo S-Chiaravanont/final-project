@@ -34,13 +34,13 @@ function ResponsiveAppBar() {
             sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Button
               href='#account'
-              sx={{ my: 2, color: 'white', display: 'block' }}
+              sx={{ my: 2, color: 'white', display: 'block', '&:hover': { color: '#fed9b7' } }}
             >
               Account
             </Button>
             <Button
               onClick={handleSignOut}
-              sx={{ my: 2, color: 'white', display: 'block' }}
+              sx={{ my: 2, color: 'white', display: 'block', '&:hover': { color: '#fed9b7' } }}
             >
               Sign Out
             </Button>
@@ -101,7 +101,7 @@ function ResponsiveAppBar() {
           sx={{ flexGrow: 1, display: 'flex' }}>
           <Button
               href='#log-in'
-              sx={{ my: 2, color: 'white', display: 'block' }}>
+            sx={{ my: 2, color: 'white', display: 'block', '&:hover': { color: '#fed9b7' } }}>
             Sign In
           </Button>
         </Box>
@@ -110,7 +110,7 @@ function ResponsiveAppBar() {
   }
 
   return (
-    <AppBar position="static" sx={{ backgroundColor: 'rgba(255,122,122)' }}>
+    <AppBar position="static" sx={{ backgroundColor: '#f07167' }}>
       <Container maxWidth="md">
         <Toolbar disableGutters>
           <Typography
@@ -125,7 +125,8 @@ function ResponsiveAppBar() {
               fontWeight: 700,
               letterSpacing: '.3rem',
               color: 'inherit',
-              textDecoration: 'none'
+              textDecoration: 'none',
+              '&:hover': { color: '#fed9b7' }
             }}
           >
             PICKUP

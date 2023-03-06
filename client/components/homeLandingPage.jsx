@@ -12,7 +12,7 @@ export default function HomeLandingPage() {
     <Container maxWidth="md">
       <Box>
         <Typography variant='h4' textAlign="center"
-        sx={{ m: 3 }}>
+        sx={{ mb: 3, pt: 3 }}>
           Looking for <br /> pick-up sports <br /> in your area?
         </Typography>
         <Box height='300px' textalign='center'
@@ -25,16 +25,16 @@ export default function HomeLandingPage() {
         </Box>
         <Box textAlign='center'>
           <Button variant='contained' size='medium' color='error'
-            sx={{ width: '150px', m: 2 }}
+            sx={{ width: '150px', m: 2, backgroundColor: '#00afb9', '&:hover': { backgroundColor: '#009DA6' } }}
             href='/#sign-up'>
             Sign Up
           </Button>
         </Box>
         <Box textAlign='center'>
           <Button variant='contained' size='medium' color='error'
-          sx={{ width: '150px', m: 2 }}
+            sx={{ width: '150px', m: 2, backgroundColor: '#00afb9', '&:hover': { backgroundColor: '#009DA6' } }}
           href='/#log-in'>
-            Log In
+            Sign In
           </Button>
         </Box>
       </Box>

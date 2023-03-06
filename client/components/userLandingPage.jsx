@@ -85,12 +85,12 @@ export default class LandingPage extends React.Component {
           </Typography>
           <Box marginBottom='30px' display='flex' justifyContent='space-evenly'
           sx={{ flexGrow: 1, display: 'flex' }}>
-            <Button variant='contained' color='error' size='medium' sx={{ flexGrow: 0.1 }}
+            <Button variant='contained' color='error' size='medium' sx={{ flexGrow: 0.1, backgroundColor: '#00afb9', '&:hover': { backgroundColor: '#009DA6' } }}
             onClick={this.searchButtonClick}>
               SEARCH
             </Button>
             <Button variant='contained' size='medium' href='#createEvent'
-            color='error' sx={{ flexGrow: 0.1 }}>
+              color='error' sx={{ flexGrow: 0.1, backgroundColor: '#00afb9', '&:hover': { backgroundColor: '#009DA6' } }}>
               CREATE
             </Button>
           </Box>
@@ -181,7 +181,7 @@ export default class LandingPage extends React.Component {
           <Box
           backgroundColor='rgb(1, 112, 117)' height='4rem'
           borderRadius='5px' display='flex' alignItems='center'
-          padding='10px' sx={{ flexGrow: 1 }}>
+            padding='10px' sx={{ flexGrow: 1, backgroundColor: '#0081a7' }}>
             <EventAvailableIcon fontSize='large' sx={{ color: 'white', mr: 1 }} />
             <Typography color='white'>Upcoming Events</Typography>
           </Box>
@@ -193,6 +193,7 @@ export default class LandingPage extends React.Component {
                   expandIcon={<ExpandMoreIcon />}
                   aria-controls="panel1a-content"
                   id="panel1a-header"
+                  sx={{ backgroundColor: '#D8D8D8' }}
                 >
                   <Typography>Event #{Number(index) + 1}</Typography>
                   <Typography>{event.sport}</Typography>

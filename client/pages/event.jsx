@@ -5,6 +5,7 @@ import Grid from '@mui/material/Grid';
 import { GmapsSetUp } from '../components/gmapsSetUp';
 import AppContext from '../lib/app-context';
 import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
 export default class EventPage extends React.Component {
   constructor(props) {
@@ -20,6 +21,7 @@ export default class EventPage extends React.Component {
     this.isEventOwner = this.isEventOwner.bind(this);
     this.eventEditOnClick = this.eventEditOnClick.bind(this);
     this.eventStatusUpdate = this.eventStatusUpdate.bind(this);
+    this.addCommentOnClick = this.addCommentOnClick.bind(this);
   }
 
   componentDidMount() {
@@ -61,6 +63,10 @@ export default class EventPage extends React.Component {
       });
   }
 
+  addCommentOnClick() {
+    return null;
+  }
+
   eventEditOnClick() {
     const newHash = `#edit?eventId=${this.state.eventId}`;
     window.location.replace(newHash);
@@ -95,21 +101,22 @@ export default class EventPage extends React.Component {
     }
     if (this.state.isOwner) {
       return (
-        <Button onClick={this.eventEditOnClick} >Edit</Button>
+        <Button
+          sx={{ color: '#f07167' }} onClick={this.eventEditOnClick} >Edit</Button>
       );
     } else {
       if (this.state.newParticipant) {
         return (
-          <Button onClick={this.eventStatusUpdate} >Join</Button>
+          <Button sx={{ color: '#f07167' }} onClick={this.eventStatusUpdate} >Join</Button>
         );
       } else {
         if (this.state.joinStatus) {
           return (
-            <Button onClick={this.eventStatusUpdate} >Unjoin</Button>
+            <Button sx={{ color: '#f07167' }} onClick={this.eventStatusUpdate} >Unjoin</Button>
           );
         } else {
           return (
-            <Button onClick={this.eventStatusUpdate} >Join</Button>
+            <Button sx={{ color: '#f07167' }} onClick={this.eventStatusUpdate} >Join</Button>
           );
         }
 
@@ -199,10 +206,29 @@ export default class EventPage extends React.Component {
               <GmapsSetUp location={location} lat={lat} lng={lng} />
               <hr />
               <Grid item xs={12}>
-                <Typography variant='h4' sx={{ textAlign: 'end' }}>
+                <Typography variant='h6' sx={{ textAlign: 'end' }}>
                   Comments:
                 </Typography>
               </Grid>
+              <form onSubmit={this.addCommentOnClick} style={{ width: '100%', display: 'flex' }}>
+                <Grid item xs={10}>
+                  <TextField
+                  multiline
+                  fullWidth
+                  id=''
+                  rows={3}
+                  variant='filled'
+                  required
+                  />
+                </Grid>
+                <Grid item xs={2}>
+                  <Button
+                  variant='outlined'
+                  sx={{ height: '50%', width: '100%', color: '#f07167' }}
+                  type='submit'
+                  >Add</Button>
+                </Grid>
+              </form>
             </Grid>
           </Box>
         </Box>

@@ -16,7 +16,8 @@ export default class EventPage extends React.Component {
       eventId: null,
       participantId: null,
       joinStatus: false,
-      newParticipant: false
+      newParticipant: false,
+      comments: null
     };
     this.isEventOwner = this.isEventOwner.bind(this);
     this.eventEditOnClick = this.eventEditOnClick.bind(this);
@@ -63,8 +64,29 @@ export default class EventPage extends React.Component {
       });
   }
 
-  addCommentOnClick() {
-    return null;
+  addCommentOnClick(e) {
+    e.preventDefault();
+    const comment = e.target.elements.commentbox.value;
+    const { userId } = this.context.user;
+    const { eventId } = this.state;
+    const payload = { comment, userId };
+    const jwt = window.localStorage.getItem('react-context-jwt');
+    const req = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': jwt
+      },
+      body: JSON.stringify(payload)
+    };
+    fetch(`/api/event/${eventId}/comments`, req)
+      .then(res => res.json())
+      .then(data => {
+        // console.log('data', data);
+        this.setState({ comments: data });
+        e.target.elements.commentbox.value = '';
+        return null;
+      });
   }
 
   eventEditOnClick() {
@@ -215,10 +237,11 @@ export default class EventPage extends React.Component {
                   <TextField
                   multiline
                   fullWidth
-                  id=''
+                  id='commentbox'
                   rows={3}
                   variant='filled'
                   required
+                  placeholder='Add comment here...'
                   />
                 </Grid>
                 <Grid item xs={2}>

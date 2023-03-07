@@ -473,6 +473,29 @@ app.put('/api/event/:eventId/join/:userId', (req, res, next) => {
     .catch(err => next(err));
 });
 
+app.post('/api/event/:eventId/comments', (req, res, next) => {
+  const { eventId } = req.params;
+  const { comment, userId } = req.body;
+  const sql = `
+    with step_one as (
+      INSERT INTO "comments" ("eventId", "userId", "comment")
+          VALUES ((select "eventId" from "events" where "eventId" = $1), (select "userId" from "users" where "userId" = $2), $3)
+    )
+    SELECT "comment", "fullName"
+      FROM "comments"
+      JOIN "users" using ("userId")
+      WHERE "eventId" = $1
+      ORDER BY "createdAt" ASC;
+  `;
+  const params = [eventId, userId, comment];
+  db.query(sql, params)
+    .then(result => {
+      const [comments] = result.rows;
+      res.status(200).json(comments);
+    })
+    .catch(err => next(err));
+});
+
 app.use(errorMiddleware);
 
 app.listen(process.env.PORT, () => {

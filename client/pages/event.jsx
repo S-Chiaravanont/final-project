@@ -23,6 +23,7 @@ export default class EventPage extends React.Component {
     this.eventEditOnClick = this.eventEditOnClick.bind(this);
     this.eventStatusUpdate = this.eventStatusUpdate.bind(this);
     this.addCommentOnClick = this.addCommentOnClick.bind(this);
+    this.displayComment = this.displayComment.bind(this);
   }
 
   componentDidMount() {
@@ -61,6 +62,13 @@ export default class EventPage extends React.Component {
               }
             }
           });
+      })
+      .then(() => {
+        fetch(`/api/event/${eventId}/comments`, req)
+          .then(res => res.json())
+          .then(data => {
+            this.setState({ comments: data });
+          });
       });
   }
 
@@ -82,11 +90,26 @@ export default class EventPage extends React.Component {
     fetch(`/api/event/${eventId}/comments`, req)
       .then(res => res.json())
       .then(data => {
-        // console.log('data', data);
         this.setState({ comments: data });
         e.target.elements.commentbox.value = '';
         return null;
       });
+  }
+
+  displayComment() {
+    if (this.state.comments !== null) {
+      const comments = this.state.comments;
+      return comments.map((com, index) => {
+        return (
+          <Grid item xs={12} key={index}>
+            <Typography sx={{ fontWeight: 'bold' }}>{com.fullName}</Typography>
+            <Typography>{com.comment}</Typography>
+          </Grid>
+        );
+      });
+    } else {
+      return null;
+    }
   }
 
   eventEditOnClick() {
@@ -232,6 +255,7 @@ export default class EventPage extends React.Component {
                   Comments:
                 </Typography>
               </Grid>
+              { this.displayComment() }
               <form onSubmit={this.addCommentOnClick} style={{ width: '100%', display: 'flex' }}>
                 <Grid item xs={10}>
                   <TextField

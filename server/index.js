@@ -489,11 +489,22 @@ app.post('/api/event/:eventId/comments', (req, res, next) => {
   `;
   const params = [eventId, userId, comment];
   db.query(sql, params)
-    .then(result => {
-      const comments = result.rows;
-      res.status(200).json(comments);
-    })
-    .catch(err => next(err));
+    .then(() => {
+      const sql2 = `
+      SELECT "comment", "fullName"
+      FROM "comments"
+      JOIN "users" using ("userId")
+      WHERE "eventId" = $1
+      ORDER BY "commentId" ASC;
+      `;
+      const params2 = [eventId];
+      db.query(sql2, params2)
+        .then(result => {
+          const comments = result.rows;
+          res.status(200).json(comments);
+        })
+        .catch(err => next(err));
+    });
 });
 
 app.get('/api/event/:eventId/comments', (req, res, next) => {
